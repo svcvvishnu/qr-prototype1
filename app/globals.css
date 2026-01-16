@@ -306,11 +306,15 @@ h3 {
 /* Floating Action Button (FAB) */
 .fab-container {
   position: fixed;
-  bottom: 32px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 50;
+  z-index: 9999;
+  /* Ensure it is on top of everything */
   pointer-events: none;
+  width: auto;
+  display: flex;
+  justify-content: center;
   /* Let clicks pass through container */
 }
 
