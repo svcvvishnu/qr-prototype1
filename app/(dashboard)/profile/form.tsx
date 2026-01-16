@@ -70,15 +70,7 @@ export default function ProfileForm({ user }: { user: any }) {
                 </div>
             )}
 
-            <form action={async () => {
-                // Logout logic via Server Action or API
-                // For simplicity, just use a link to API or handle here if I had logout action
-            }}>
-                <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-                    <a href="/api/auth/logout" style={{ color: 'var(--error)', fontWeight: 600 }}>Log Out</a>
-                    {/* Note: Use proper logout action later */}
-                </div>
-            </form>
+
         </div>
     );
 }

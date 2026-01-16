@@ -22,72 +22,96 @@ export default async function DashboardHome() {
 
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h1 className="title">My QR Codes</h1>
-                <Link href="/create" className="btn" style={{ width: 'auto' }}>
+            <div className="flex-between mb-6">
+                <div>
+                    <h1>Dashboard</h1>
+                    <p>Manage your QR codes and items</p>
+                </div>
+                <Link href="/create" className="btn btn-primary">
                     + New Item
                 </Link>
             </div>
 
             {categories.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-secondary)' }}>
-                    <p>You haven't created any categories or items yet.</p>
-                    <p style={{ marginTop: '0.5rem' }}>Click "+ New Item" to get started.</p>
+                <div className="card" style={{ textAlign: 'center', padding: '60px 20px' }}>
+                    <div style={{ fontSize: '32px', marginBottom: '16px', color: 'var(--text-light)' }}>📭</div>
+                    <h3>No Items Yet</h3>
+                    <p style={{ maxWidth: '300px', margin: '8px auto 24px' }}>
+                        Get started by creating your first item. You can create ID cards, Lost & Found tags, or Custom QRs.
+                    </p>
+                    <Link href="/create" className="btn btn-primary">
+                        Create First Item
+                    </Link>
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                <div className="flex-col gap-4">
                     {categories.map((cat) => (
-                        <section key={cat.id}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                                <h2 style={{ fontSize: '1.125rem', fontWeight: 600 }}>{cat.name}</h2>
-                                <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{cat.items.length} items</span>
+                        <section key={cat.id} className="card" style={{ padding: '20px' }}>
+                            <div className="flex-between" style={{ marginBottom: '16px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
+                                <h3>{cat.name}</h3>
+                                <span className="badge badge-neutral">{cat.items.length} Items</span>
                             </div>
 
-                            {/* Horizontally scrollable list */}
-                            <div style={{
-                                display: 'flex',
-                                gap: '1rem',
-                                overflowX: 'auto',
-                                paddingBottom: '1rem',
-                                marginRight: '-1rem', // bleeding logic if needed, simplify for now
-                                paddingRight: '1rem'
-                            }}>
-                                {cat.items.map((item) => (
-                                    <Link href={`/item/${item.id}`} key={item.id} style={{
-                                        minWidth: '160px',
-                                        width: '160px',
-                                        backgroundColor: 'var(--surface)',
-                                        border: '1px solid var(--border)',
-                                        borderRadius: 'var(--radius)',
-                                        padding: '1rem',
-                                        flexShrink: 0,
-                                        boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)'
-                                    }}>
-                                        <div style={{
-                                            aspectRatio: '1',
-                                            backgroundColor: '#f1f5f9',
-                                            borderRadius: '0.5rem',
-                                            marginBottom: '0.75rem',
+                            {cat.items.length === 0 ? (
+                                <p style={{ fontStyle: 'italic' }}>No items in this category.</p>
+                            ) : (
+                                <div className="grid-layout">
+                                    {cat.items.map((item) => (
+                                        <Link href={`/item/${item.id}`} key={item.id} style={{
                                             display: 'flex',
                                             alignItems: 'center',
-                                            justifyContent: 'center',
-                                            overflow: 'hidden'
-                                        }}>
-                                            {/* Placeholder for QR Code Thumbnail or Icon */}
-                                            {item.qrCodeUrl ? (
-                                                <img src={item.qrCodeUrl} alt="QR" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                                            ) : (
-                                                <span style={{ fontSize: '2rem' }}>📱</span>
-                                            )}
-                                        </div>
-                                        <h3 style={{ fontSize: '1rem', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</h3>
-                                        <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{item.status}</p>
+                                            padding: '12px',
+                                            borderRadius: '6px',
+                                            border: '1px solid var(--border-color)',
+                                            transition: 'all 0.2s',
+                                            backgroundColor: 'white'
+                                        }} className="hover-effect">
+                                            {/* Thumb */}
+                                            <div style={{
+                                                width: '48px',
+                                                height: '48px',
+                                                backgroundColor: '#f8fafc',
+                                                borderRadius: '4px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                marginRight: '16px',
+                                                flexShrink: 0
+                                            }}>
+                                                {item.qrCodeUrl ? (
+                                                    <img src={item.qrCodeUrl} alt="QR" style={{ width: '32px', height: '32px' }} />
+                                                ) : (
+                                                    <span>📱</span>
+                                                )}
+                                            </div>
+
+                                            {/* Info */}
+                                            <div style={{ minWidth: 0, flex: 1 }}>
+                                                <div style={{ fontWeight: 500, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                    {item.name}
+                                                </div>
+                                                <div style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    <span>{item.type.replace('_', ' ')}</span>
+                                                    {item.status === 'PUBLISHED' && <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--status-success-text)' }}></span>}
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                    <Link href={`/create?cat=${cat.id}`} style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        padding: '12px',
+                                        borderRadius: '6px',
+                                        border: '1px dashed var(--border-color)',
+                                        color: 'var(--text-muted)',
+                                        fontSize: '13px',
+                                        fontWeight: 500
+                                    }}>
+                                        + Add to {cat.name}
                                     </Link>
-                                ))}
-                                {cat.items.length === 0 && (
-                                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontStyle: 'italic' }}>No items in this category.</div>
-                                )}
-                            </div>
+                                </div>
+                            )}
                         </section>
                     ))}
                 </div>

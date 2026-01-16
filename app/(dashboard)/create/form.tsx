@@ -6,7 +6,7 @@ import { createItem } from './action';
 export default function CreateItemForm({ categories }: { categories: any[] }) {
     const [state, formAction, isPending] = useActionState(createItem, null);
     const [selectedType, setSelectedType] = useState('ID');
-    const [isNewCategory, setIsNewCategory] = useState(false);
+    const [isNewCategory, setIsNewCategory] = useState(categories.length === 0);
 
     return (
         <form action={formAction} className="card">

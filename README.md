@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# QR Master - Mobile QR Code Management
 
-## Getting Started
+QR Master is a modern, mobile-first web application for creating, managing, and sharing QR codes. It features a premium "Glassmorphism" UI, secure authentication, and specialized public views for ID cards and Lost & Found items.
 
-First, run the development server:
+## Features
+- **Modern Dashboard**: Intuitively organized categories and items with a sophisticated UI.
+- **Dynamic QR Generation**: Automatic QR code generation for every item.
+- **Smart Public Views**:
+    - **ID Card**: Displays contact details securely.
+    - **Lost & Found**: Prominently shows "Help! I'm Lost" with a direct contact button.
+    - **Custom**: Displays custom text or information.
+- **Scan History**: Tracks when and where (simulation) your QR codes are scanned.
+- **Identity Verification**: Mock Aadhar upload simulation for "Verified" blue tick status.
+- **Secure Auth**: Custom JWT-based authentication with secure cookies.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Tech Stack
+- **Framework**: [Next.js 15+ (App Router)](https://nextjs.org/)
+- **Language**: TypeScript
+- **Database**: SQLite (via [Prisma ORM](https://www.prisma.io/))
+- **Styling**: Vanilla CSS (CSS Modules & Global Variables for Design System)
+- **Auth**: JOSE (JWT) + Bcrypt
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Local Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Prerequisites
+- Node.js 18+
+- NPM
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Setup
+1.  **Clone the repository**:
+    ```bash
+    git clone <repository-url>
+    cd qr-prototype1
+    ```
 
-## Learn More
+2.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+3.  **Setup Environment**:
+    Create a `.env` file (if not present) with:
+    ```env
+    DATABASE_URL="file:./dev.db"
+    JWT_SECRET="your-super-secret-key"
+    BASE_URL="http://localhost:3000"
+    ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4.  **Initialize Database**:
+    ```bash
+    npx prisma migrate dev --name init
+    ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5.  **Run Development Server**:
+    ```bash
+    npm run dev
+    ```
+    Access the app at `http://localhost:3000`.
 
-## Deploy on Vercel
+## Project Structure
+- `/app`: Next.js App Router pages and layouts.
+    - `(auth)`: Login and Signup routes.
+    - `(dashboard)`: Main authenticated application routes.
+    - `q/[id]`: Public-facing QR code landing pages.
+- `/lib`: Helper utilities for Database (Prisma) and Authentication.
+- `/prisma`: Database schema and migrations.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+Private / Proprietary

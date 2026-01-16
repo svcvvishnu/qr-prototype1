@@ -10,40 +10,43 @@ export default async function DashboardLayout({
     const session = await getSession();
     if (!session) redirect('/login');
 
+    const userInitials = session.name ? session.name.charAt(0).toUpperCase() : 'U';
+
     return (
-        <div style={{ paddingBottom: '80px' }}> {/* Padding for potential bottom nav or just spacing */}
+        <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
+            {/* Header */}
             <header style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '1rem',
-                backgroundColor: 'var(--surface)',
-                borderBottom: '1px solid var(--border)',
+                height: 'var(--header-height)',
+                backgroundColor: 'var(--bg-surface)',
+                borderBottom: '1px solid var(--border-color)',
                 position: 'sticky',
                 top: 0,
-                zIndex: 10
+                zIndex: 50
             }}>
-                <Link href="/" style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--primary)' }}>
-                    QR Master
-                </Link>
-                <Link href="/profile" style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    backgroundColor: 'var(--background)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '1px solid var(--border)'
-                }}>
-                    {/* Simple User Icon SVG */}
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </Link>
+                <div className="container flex-between" style={{ height: '100%' }}>
+                    <Link href="/" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-main)' }}>
+                        QR Master
+                    </Link>
+
+                    <Link href="/profile" style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        backgroundColor: 'var(--primary-subtle)',
+                        color: 'var(--primary)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: 600,
+                        fontSize: '14px'
+                    }}>
+                        {userInitials}
+                    </Link>
+                </div>
             </header>
-            <main className="container" style={{ paddingTop: '1rem', minHeight: 'calc(100vh - 70px)' }}>
+
+            {/* Main Content */}
+            <main className="container" style={{ paddingTop: '32px', paddingBottom: '48px' }}>
                 {children}
             </main>
         </div>
