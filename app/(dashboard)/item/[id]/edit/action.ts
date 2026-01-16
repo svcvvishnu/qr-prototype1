@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import QRCode from 'qrcode';
 
 export async function updateItem(prevState: any, formData: FormData) {
     const session = await getSession();
@@ -42,6 +43,11 @@ export async function updateItem(prevState: any, formData: FormData) {
             return { error: 'Item not found or unauthorized.' };
         }
 
+        // Regenerate QR Code to ensure URL is up to date (e.g. if BASE_URL changes)
+        const baseUrl = process.env.BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+        const publicUrl = `${baseUrl}/q/${id}`;
+        const qrCodeDataUri = await QRCode.toDataURL(publicUrl);
+
         await prisma.item.update({
             where: { id },
             data: {
@@ -50,6 +56,7 @@ export async function updateItem(prevState: any, formData: FormData) {
                 categoryId,
                 type,
                 payload: JSON.stringify(payloadData),
+                qrCodeUrl: qrCodeDataUri
             },
         });
 
