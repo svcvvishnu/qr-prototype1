@@ -234,11 +234,41 @@ h3 {
   border: 1px solid var(--border-color);
 }
 
-/* Item Grid (Bento Style) */
+/* Item Grid (Bento Style) - Deprecated for categories, keeping just in case */
 .grid-layout {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 20px;
+}
+
+/* Horizontal Scroll Layout */
+.scroll-row {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 20px;
+  /* Space for shadow/scroll */
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+  margin: 0 -24px;
+  /* Bleed out to edges on mobile */
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* Hide scrollbar for Chrome/Safari/Opera */
+.scroll-row::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-item {
+  flex: 0 0 auto;
+  width: 280px;
+  /* Fixed width for consistency */
+  scroll-snap-align: start;
 }
 
 /* Avatar */
@@ -271,4 +301,40 @@ h3 {
 
 .animate-in {
   animation: fadeIn 0.4s ease forwards;
+}
+
+/* Floating Action Button (FAB) */
+.fab-container {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  pointer-events: none;
+  /* Let clicks pass through container */
+}
+
+.fab-button {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background: var(--primary);
+  color: white;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 16px;
+  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.fab-button:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.5);
+}
+
+.fab-button:active {
+  transform: scale(0.95);
 }

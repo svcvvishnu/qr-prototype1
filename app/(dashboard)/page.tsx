@@ -27,9 +27,6 @@ export default async function DashboardHome() {
                     <h1 style={{ fontWeight: 800 }}>Dashboard</h1>
                     <p style={{ marginTop: '4px' }}>Overview of your active QR codes.</p>
                 </div>
-                <Link href="/create" className="btn btn-primary">
-                    <span style={{ marginRight: '6px', fontSize: '18px' }}>+</span> New Item
-                </Link>
             </div>
 
             {categories.length === 0 ? (
@@ -53,62 +50,59 @@ export default async function DashboardHome() {
                                 <span className="badge badge-neutral" style={{ fontSize: '11px', height: '22px' }}>{cat.items.length}</span>
                             </div>
 
-                            {/* Grid */}
-                            <div className="grid-layout">
+                            {/* Horizontal Scroll Row */}
+                            <div className="scroll-row">
                                 {cat.items.map((item) => (
-                                    <Link href={`/item/${item.id}`} key={item.id} className="card hover-card" style={{ padding: '0', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
-                                        {/* QR Preview Area */}
-                                        <div style={{
-                                            background: 'var(--bg-subtle)',
-                                            height: '140px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            borderBottom: '1px solid var(--border-color)'
-                                        }}>
-                                            {item.qrCodeUrl ? (
-                                                <img src={item.qrCodeUrl} alt="QR" style={{ height: '80px', width: '80px', mixBlendMode: 'multiply' }} />
-                                            ) : (
-                                                <span style={{ fontSize: '24px', opacity: 0.3 }}>📱</span>
-                                            )}
-                                        </div>
+                                    <Link href={`/item/${item.id}`} key={item.id} className="card hover-card scroll-item" style={{ padding: '20px', display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between', border: '1px solid var(--border-color)' }}>
 
-                                        {/* Content Area */}
-                                        <div style={{ padding: '16px' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px' }}>
-                                                <h3 style={{ fontSize: '16px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{item.name}</h3>
-                                            </div>
-
-                                            <div className="flex-between">
-                                                <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                                                    {item.type === 'LOST' ? '🛑 Lost & Found' : item.type === 'ID' ? '🪪 ID Card' : '📦 Custom'}
-                                                </span>
+                                        <div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px' }}>
+                                                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--bg-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+                                                    {item.type === 'LOST' ? '🛑' : item.type === 'ID' ? '🪪' : '📦'}
+                                                </div>
                                                 {item.status === 'PUBLISHED' && (
-                                                    <div title="Active" style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--status-success-text)', boxShadow: '0 0 0 2px var(--status-success-bg)' }}></div>
+                                                    <div title="Active" style={{ padding: '4px 8px', borderRadius: '99px', background: 'var(--status-success-bg)', color: 'var(--status-success-text)', fontSize: '11px', fontWeight: 600 }}>Active</div>
                                                 )}
                                             </div>
+
+                                            <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</h3>
+                                            <p style={{ fontSize: '13px', color: 'var(--text-muted)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.4' }}>
+                                                {item.description || "No description provided."}
+                                            </p>
+                                        </div>
+
+                                        <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: 'var(--text-light)' }}>
+                                            <span>{new Date(item.updatedAt).toLocaleDateString()}</span>
+                                            <span>View &rarr;</span>
                                         </div>
                                     </Link>
                                 ))}
 
-                                {/* Add New Card */}
-                                <Link href={`/create?cat=${cat.id}`} className="card hover-card flex-center" style={{
+                                {/* Add New Card (Inline) */}
+                                <Link href={`/create?cat=${cat.id}`} className="card hover-card flex-center scroll-item" style={{
                                     borderStyle: 'dashed',
                                     background: 'transparent',
                                     boxShadow: 'none',
-                                    minHeight: '220px',
                                     color: 'var(--text-light)',
                                     flexDirection: 'column',
-                                    gap: '12px'
+                                    gap: '12px',
+                                    minHeight: '180px' // Match visual height roughly
                                 }}>
                                     <span style={{ fontSize: '32px', fontWeight: 300 }}>+</span>
-                                    <span style={{ fontSize: '14px', fontWeight: 600 }}>Add Item</span>
+                                    <span style={{ fontSize: '14px', fontWeight: 600 }}>Add to {cat.name}</span>
                                 </Link>
                             </div>
                         </div>
                     ))}
                 </div>
             )}
+
+            {/* Floating Action Button */}
+            <div className="fab-container">
+                <Link href="/create" className="fab-button">
+                    <span style={{ marginRight: '8px', fontSize: '20px' }}>+</span> New Item
+                </Link>
+            </div>
         </div>
     );
 }
