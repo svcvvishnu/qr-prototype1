@@ -21,98 +21,91 @@ export default async function DashboardHome() {
     const categories = await getData(session.userId);
 
     return (
-        <div>
-            <div className="flex-between mb-6">
+        <div className="animate-in">
+            <div className="flex-between" style={{ marginBottom: '32px' }}>
                 <div>
-                    <h1>Dashboard</h1>
-                    <p>Manage your QR codes and items</p>
+                    <h1 style={{ fontWeight: 800 }}>Dashboard</h1>
+                    <p style={{ marginTop: '4px' }}>Overview of your active QR codes.</p>
                 </div>
                 <Link href="/create" className="btn btn-primary">
-                    + New Item
+                    <span style={{ marginRight: '6px', fontSize: '18px' }}>+</span> New Item
                 </Link>
             </div>
 
             {categories.length === 0 ? (
-                <div className="card" style={{ textAlign: 'center', padding: '60px 20px' }}>
-                    <div style={{ fontSize: '32px', marginBottom: '16px', color: 'var(--text-light)' }}>📭</div>
-                    <h3>No Items Yet</h3>
-                    <p style={{ maxWidth: '300px', margin: '8px auto 24px' }}>
-                        Get started by creating your first item. You can create ID cards, Lost & Found tags, or Custom QRs.
+                <div className="card flex-col flex-center" style={{ padding: '80px 20px', textAlign: 'center', borderStyle: 'dashed' }}>
+                    <div style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.5 }}>✨</div>
+                    <h2 style={{ fontSize: '18px', marginBottom: '8px' }}>It's quiet here</h2>
+                    <p style={{ maxWidth: '320px', marginBottom: '24px' }}>
+                        Transform your items with smart QR codes. Create your first digital identity or lost & found tag.
                     </p>
                     <Link href="/create" className="btn btn-primary">
-                        Create First Item
+                        Start Creating
                     </Link>
                 </div>
             ) : (
                 <div className="flex-col gap-4">
                     {categories.map((cat) => (
-                        <section key={cat.id} className="card" style={{ padding: '20px' }}>
-                            <div className="flex-between" style={{ marginBottom: '16px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
-                                <h3>{cat.name}</h3>
-                                <span className="badge badge-neutral">{cat.items.length} Items</span>
+                        <div key={cat.id}>
+                            {/* Category Header */}
+                            <div className="flex-between" style={{ padding: '0 8px', marginBottom: '12px' }}>
+                                <h3 style={{ textTransform: 'uppercase', color: 'var(--text-muted)', fontSize: '12px', letterSpacing: '0.05em' }}>{cat.name}</h3>
+                                <span className="badge badge-neutral" style={{ fontSize: '11px', height: '22px' }}>{cat.items.length}</span>
                             </div>
 
-                            {cat.items.length === 0 ? (
-                                <p style={{ fontStyle: 'italic' }}>No items in this category.</p>
-                            ) : (
-                                <div className="grid-layout">
-                                    {cat.items.map((item) => (
-                                        <Link href={`/item/${item.id}`} key={item.id} style={{
+                            {/* Grid */}
+                            <div className="grid-layout">
+                                {cat.items.map((item) => (
+                                    <Link href={`/item/${item.id}`} key={item.id} className="card hover-card" style={{ padding: '0', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+                                        {/* QR Preview Area */}
+                                        <div style={{
+                                            background: 'var(--bg-subtle)',
+                                            height: '140px',
                                             display: 'flex',
                                             alignItems: 'center',
-                                            padding: '12px',
-                                            borderRadius: '6px',
-                                            border: '1px solid var(--border-color)',
-                                            transition: 'all 0.2s',
-                                            backgroundColor: 'white'
-                                        }} className="hover-effect">
-                                            {/* Thumb */}
-                                            <div style={{
-                                                width: '48px',
-                                                height: '48px',
-                                                backgroundColor: '#f8fafc',
-                                                borderRadius: '4px',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                marginRight: '16px',
-                                                flexShrink: 0
-                                            }}>
-                                                {item.qrCodeUrl ? (
-                                                    <img src={item.qrCodeUrl} alt="QR" style={{ width: '32px', height: '32px' }} />
-                                                ) : (
-                                                    <span>📱</span>
-                                                )}
+                                            justifyContent: 'center',
+                                            borderBottom: '1px solid var(--border-color)'
+                                        }}>
+                                            {item.qrCodeUrl ? (
+                                                <img src={item.qrCodeUrl} alt="QR" style={{ height: '80px', width: '80px', mixBlendMode: 'multiply' }} />
+                                            ) : (
+                                                <span style={{ fontSize: '24px', opacity: 0.3 }}>📱</span>
+                                            )}
+                                        </div>
+
+                                        {/* Content Area */}
+                                        <div style={{ padding: '16px' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px' }}>
+                                                <h3 style={{ fontSize: '16px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{item.name}</h3>
                                             </div>
 
-                                            {/* Info */}
-                                            <div style={{ minWidth: 0, flex: 1 }}>
-                                                <div style={{ fontWeight: 500, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                                    {item.name}
-                                                </div>
-                                                <div style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                    <span>{item.type.replace('_', ' ')}</span>
-                                                    {item.status === 'PUBLISHED' && <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--status-success-text)' }}></span>}
-                                                </div>
+                                            <div className="flex-between">
+                                                <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                                                    {item.type === 'LOST' ? '🛑 Lost & Found' : item.type === 'ID' ? '🪪 ID Card' : '📦 Custom'}
+                                                </span>
+                                                {item.status === 'PUBLISHED' && (
+                                                    <div title="Active" style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--status-success-text)', boxShadow: '0 0 0 2px var(--status-success-bg)' }}></div>
+                                                )}
                                             </div>
-                                        </Link>
-                                    ))}
-                                    <Link href={`/create?cat=${cat.id}`} style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        padding: '12px',
-                                        borderRadius: '6px',
-                                        border: '1px dashed var(--border-color)',
-                                        color: 'var(--text-muted)',
-                                        fontSize: '13px',
-                                        fontWeight: 500
-                                    }}>
-                                        + Add to {cat.name}
+                                        </div>
                                     </Link>
-                                </div>
-                            )}
-                        </section>
+                                ))}
+
+                                {/* Add New Card */}
+                                <Link href={`/create?cat=${cat.id}`} className="card hover-card flex-center" style={{
+                                    borderStyle: 'dashed',
+                                    background: 'transparent',
+                                    boxShadow: 'none',
+                                    minHeight: '220px',
+                                    color: 'var(--text-light)',
+                                    flexDirection: 'column',
+                                    gap: '12px'
+                                }}>
+                                    <span style={{ fontSize: '32px', fontWeight: 300 }}>+</span>
+                                    <span style={{ fontSize: '14px', fontWeight: 600 }}>Add Item</span>
+                                </Link>
+                            </div>
+                        </div>
                     ))}
                 </div>
             )}

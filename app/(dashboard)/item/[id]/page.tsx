@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
+import ItemEditor from './item-editor';
 
 async function getItem(id: number, userId: number) {
     const item = await prisma.item.findUnique({
@@ -13,16 +14,26 @@ async function getItem(id: number, userId: number) {
     return item;
 }
 
+
+// Add getUser helper
+async function getUser(userId: number) {
+    return await prisma.user.findUnique({
+        where: { id: userId },
+    });
+}
+
 export default async function ItemDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const session = await getSession();
     if (!session) redirect('/login');
 
     const { id } = await params;
 
-    const item = await getItem(parseInt(id), session.userId);
-    if (!item) notFound();
+    const [item, user] = await Promise.all([
+        getItem(parseInt(id), session.userId),
+        getUser(session.userId)
+    ]);
 
-    const payload = JSON.parse(item.payload);
+    if (!item) notFound();
 
     return (
         <div>
@@ -45,25 +56,13 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
                         </div>
                         {item.qrCodeUrl && (
                             <div style={{ textAlign: 'center' }}>
-                                <img src={item.qrCodeUrl} alt="QR" style={{ width: '80px', height: '80px', border: '1px solid var(--border-color)', borderRadius: '4px', padding: '4px' }} />
+                                <img src={item.qrCodeUrl} alt="QR" style={{ width: '200px', height: '200px', border: '1px solid var(--border-color)', borderRadius: '4px', padding: '4px' }} />
                                 <a href={item.qrCodeUrl} download="qr.png" style={{ display: 'block', fontSize: '11px', marginTop: '4px', color: 'var(--primary)', fontWeight: 500 }}>Download</a>
                             </div>
                         )}
                     </div>
 
-                    <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '20px' }}>
-                        <h3 style={{ marginBottom: '16px', fontSize: '14px', textTransform: 'uppercase', color: 'var(--text-light)' }}>Content Data</h3>
-                        <div style={{ display: 'grid', gap: '12px' }}>
-                            {Object.entries(payload).map(([key, value]) => (
-                                <div key={key}>
-                                    <div className="label" style={{ textTransform: 'capitalize' }}>{key}</div>
-                                    <div style={{ fontSize: '14px', color: 'var(--text-main)', padding: '8px 12px', backgroundColor: 'var(--bg-subtle)', borderRadius: '4px' }}>
-                                        {String(value)}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    <ItemEditor item={item} user={user} />
 
                     <div className="mt-4" style={{ display: 'flex', gap: '12px' }}>
                         <Link href={`/q/${item.id}`} className="btn btn-secondary" target="_blank" style={{ flex: 1 }}>

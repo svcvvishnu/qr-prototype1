@@ -18,7 +18,6 @@ async function logScan(itemId: number, scannerId: number | null) {
 export default async function PublicQRPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const itemId = parseInt(id);
-    const session = await getSession();
 
     const item = await prisma.item.findUnique({
         where: { id: itemId },
@@ -35,110 +34,117 @@ export default async function PublicQRPage({ params }: { params: Promise<{ id: s
 
     if (!item || item.status !== 'PUBLISHED') {
         return (
-            <div className="public-wrapper">
-                <div className="card public-card">
-                    <h1 style={{ color: 'var(--status-error-text)' }}>Item Not Found</h1>
-                    <p>This item is private or does not exist.</p>
+            <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-app)' }}>
+                <div className="card" style={{ textAlign: 'center', maxWidth: '400px' }}>
+                    <h2 style={{ color: 'var(--text-light)' }}>Item Unavailable</h2>
                 </div>
             </div>
         );
     }
 
-    // Log Scan
-    await logScan(itemId, session ? session.userId : null);
+    // Log Scan (Fire and forget)
+    logScan(itemId, null);
 
     const payload = JSON.parse(item.payload);
     const isLostItem = item.type === 'LOST';
 
     return (
-        <div className="public-wrapper">
+        <div style={{ minHeight: '100vh', background: 'var(--bg-subtle)', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '60px', paddingBottom: '40px' }}>
 
-            <div style={{ marginBottom: '24px', fontWeight: 700, color: 'var(--text-light)', fontSize: '14px', letterSpacing: '0.05em' }}>
-                QR MASTER VERIFIED
+            <div style={{ marginBottom: '24px', fontWeight: 800, fontSize: '20px', color: 'var(--primary)', letterSpacing: '-0.02em' }}>
+                QR<span style={{ color: 'var(--text-main)' }}>Master</span>
             </div>
 
-            <div className="card public-card" style={{ padding: '0', overflow: 'hidden' }}>
-                {/* Header Banner */}
-                <div style={{
-                    backgroundColor: isLostItem ? 'var(--status-warning-bg)' : 'var(--primary)',
-                    padding: '32px 20px',
-                    color: isLostItem ? 'var(--status-warning-text)' : 'white'
-                }}>
-                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>
-                        {isLostItem ? '⚠️' : item.type === 'ID' ? '🪪' : '📦'}
+            <div className="card animate-in" style={{ width: '100%', maxWidth: '420px', padding: '0', overflow: 'hidden', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-lg)' }}>
+
+                {/* Verification Status Banner */}
+                {item.category.user.isVerified && (
+                    <div style={{ background: 'var(--status-success-bg)', padding: '8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '13px', color: 'var(--status-success-text)', fontWeight: 600 }}>
+                        <span>✓ Verified Owner</span>
                     </div>
-                    <h1 style={{ color: 'inherit', marginBottom: '8px' }}>
-                        {isLostItem ? "Help! I am Lost." : item.name}
+                )}
+
+                {/* Hero Section */}
+                <div style={{
+                    padding: '40px 32px',
+                    textAlign: 'center',
+                    background: isLostItem ? 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)' : 'white'
+                }}>
+                    <div style={{ fontSize: '56px', marginBottom: '16px', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))' }}>
+                        {isLostItem ? '🚨' : item.type === 'ID' ? '👋' : '📦'}
+                    </div>
+                    <h1 style={{ fontSize: '28px', marginBottom: '8px', color: isLostItem ? '#92400e' : 'var(--text-main)' }}>
+                        {isLostItem ? "I'm Lost." : item.name}
                     </h1>
-                    {isLostItem && <p style={{ color: 'inherit', opacity: 0.9 }}>Please help return this item to its owner.</p>}
+                    <p style={{ color: isLostItem ? '#b45309' : 'var(--text-muted)' }}>
+                        {isLostItem ? "Please help me get back home." : "Scan successful."}
+                    </p>
                 </div>
 
                 {/* Content Body */}
-                <div style={{ padding: '32px 24px', textAlign: 'left' }}>
+                <div style={{ padding: '32px' }}>
 
-                    {/* Owner Info */}
-                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px', fontSize: '14px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
-                        <span style={{ color: 'var(--text-muted)', marginRight: '8px' }}>Owned by</span>
-                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{item.category.user.name}</span>
-                        {item.category.user.isVerified && (
-                            <span style={{ marginLeft: '6px', color: 'var(--primary)', fontSize: '16px' }}>✓</span>
+                    {/* Owner badge */}
+                    <div className="flex-center" style={{ marginBottom: '32px' }}>
+                        <span className="badge badge-neutral" style={{ padding: '8px 16px' }}>
+                            Owned by {item.category.user.name}
+                        </span>
+                    </div>
+
+                    <div className="flex-col gap-4">
+                        {isLostItem && (
+                            <>
+                                <blockquote style={{
+                                    fontSize: '16px',
+                                    lineHeight: '1.6',
+                                    color: 'var(--text-main)',
+                                    fontStyle: 'italic',
+                                    textAlign: 'center',
+                                    marginBottom: '16px'
+                                }}>
+                                    "{payload.message}"
+                                </blockquote>
+
+                                {payload.phone && (
+                                    <a href={`tel:${payload.phone}`} className="btn btn-primary" style={{ height: '52px', fontSize: '16px' }}>
+                                        📞 Call Owner Now
+                                    </a>
+                                )}
+                            </>
+                        )}
+
+                        {item.type === 'ID' && (
+                            <>
+                                <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                                    <div style={{ fontSize: '24px', fontWeight: 600 }}>{payload.name}</div>
+                                    <div style={{ color: 'var(--text-muted)' }}>{payload.phone}</div>
+                                </div>
+                                <div className="flex-center gap-2">
+                                    <a href={`tel:${payload.phone}`} className="btn btn-secondary" style={{ flex: 1 }}>
+                                        Call
+                                    </a>
+                                    <a href={`sms:${payload.phone}`} className="btn btn-secondary" style={{ flex: 1 }}>
+                                        Message
+                                    </a>
+                                </div>
+                            </>
+                        )}
+
+                        {item.type === 'CUSTOM' && (
+                            <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6, color: 'var(--text-main)' }}>
+                                {payload.content}
+                            </div>
                         )}
                     </div>
 
-                    {/* Dynamic Content */}
-                    {item.type === 'ID' && (
-                        <div className="flex-col gap-4">
-                            <div>
-                                <div className="label">Full Name</div>
-                                <div style={{ fontSize: '18px', fontWeight: 500 }}>{payload.name}</div>
-                            </div>
-                            <div>
-                                <div className="label">Contact</div>
-                                <a href={`tel:${payload.phone}`} className="btn btn-secondary" style={{ width: '100%', justifyContent: 'flex-start' }}>
-                                    📞 {payload.phone}
-                                </a>
-                            </div>
-                        </div>
-                    )}
-
-                    {item.type === 'LOST' && (
-                        <div>
-                            <div style={{
-                                backgroundColor: '#fffbeb',
-                                borderLeft: '4px solid #f59e0b',
-                                padding: '16px',
-                                borderRadius: '4px',
-                                marginBottom: '24px',
-                                color: '#92400e',
-                                fontStyle: 'italic'
-                            }}>
-                                "{payload.message}"
-                            </div>
-
-                            <div className="label">Contact Owner</div>
-                            <div className="flex-col gap-2">
-                                {payload.phone && (
-                                    <a href={`tel:${payload.phone}`} className="btn btn-primary" style={{ width: '100%' }}>
-                                        Call {payload.phone}
-                                    </a>
-                                )}
-                                {payload.contact && payload.contact.includes('@') && (
-                                    <a href={`mailto:${payload.contact}`} className="btn btn-secondary" style={{ width: '100%' }}>
-                                        Email {payload.contact}
-                                    </a>
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    {item.type === 'CUSTOM' && (
-                        <div style={{ lineHeight: '1.6', whiteSpace: 'pre-line' }}>
-                            {payload.content}
-                        </div>
-                    )}
                 </div>
-            </div>
 
+                {/* Footer */}
+                <div style={{ background: 'var(--bg-subtle)', padding: '16px', textAlign: 'center', fontSize: '12px', color: 'var(--text-light)' }}>
+                    Powered by QRMaster • Secure & Private
+                </div>
+
+            </div>
         </div>
     );
 }

@@ -3,7 +3,7 @@
 import { useActionState, useState } from 'react';
 import { createItem } from './action';
 
-export default function CreateItemForm({ categories }: { categories: any[] }) {
+export default function CreateItemForm({ categories, user }: { categories: any[], user?: any }) {
     const [state, formAction, isPending] = useActionState(createItem, null);
     const [selectedType, setSelectedType] = useState('ID');
     const [isNewCategory, setIsNewCategory] = useState(categories.length === 0);
@@ -63,11 +63,25 @@ export default function CreateItemForm({ categories }: { categories: any[] }) {
                 <>
                     <div className="input-group">
                         <label className="input-label">Display Name</label>
-                        <input type="text" name="payload_name" className="input" placeholder="Your Name" required />
+                        <input
+                            type="text"
+                            name="payload_name"
+                            className="input"
+                            placeholder="Your Name"
+                            required
+                            defaultValue={user?.name || ''}
+                        />
                     </div>
                     <div className="input-group">
                         <label className="input-label">Phone Number</label>
-                        <input type="tel" name="payload_phone" className="input" placeholder="+91..." required />
+                        <input
+                            type="tel"
+                            name="payload_phone"
+                            className="input"
+                            placeholder="+91..."
+                            required
+                            defaultValue={user?.mobile || ''}
+                        />
                     </div>
                 </>
             )}
