@@ -42,8 +42,13 @@ export default async function PublicQRPage({ params }: { params: Promise<{ id: s
         );
     }
 
-    // Log Scan (Fire and forget)
-    logScan(itemId, null);
+    // Log Scan (Fire and forget), BUT skip if owner
+    const session = await getSession();
+    const isOwner = session && session.userId === item.category.userId;
+
+    if (!isOwner) {
+        logScan(itemId, session?.userId || null);
+    }
 
     const payload = JSON.parse(item.payload);
     const isLostItem = item.type === 'LOST';

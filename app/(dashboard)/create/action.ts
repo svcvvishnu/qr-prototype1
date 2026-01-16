@@ -62,8 +62,9 @@ export async function createItem(prevState: any, formData: FormData) {
 
         // 2. Generate QR Code containing the public URL
         // For prototype, assuming localhost or deployed URL.
+        // For prototype, assuming localhost or deployed URL.
         // Ideally use an ENV var for BASE_URL.
-        const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+        const baseUrl = process.env.BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
         const publicUrl = `${baseUrl}/q/${item.id}`;
 
         const qrCodeDataUri = await QRCode.toDataURL(publicUrl);

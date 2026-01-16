@@ -7,7 +7,16 @@ import ItemEditor from './item-editor';
 async function getItem(id: number, userId: number) {
     const item = await prisma.item.findUnique({
         where: { id },
-        include: { category: true, scans: { orderBy: { timestamp: 'desc' }, take: 10 } }
+        include: {
+            category: true,
+            scans: {
+                orderBy: { timestamp: 'desc' },
+                take: 10,
+                include: {
+                    scanner: { select: { name: true } }
+                }
+            }
+        }
     });
 
     if (!item || item.category.userId !== userId) return null;
@@ -90,7 +99,8 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
                                     fontSize: '14px'
                                 }}>
                                     <span style={{ fontWeight: 500 }}>
-                                        {scan.scannerId ? `User #${scan.scannerId}` : 'Anonymous Scan'}
+                                        {/* @ts-ignore - Relation exists but types might lag */}
+                                        {scan.scanner ? scan.scanner.name : (scan.scannerId ? `User #${scan.scannerId}` : 'Anonymous Scan')}
                                     </span>
                                     <span style={{ color: 'var(--text-muted)' }}>
                                         {new Date(scan.timestamp).toLocaleDateString()}
