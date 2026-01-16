@@ -1,0 +1,32 @@
+I want you to create a user intutuive mobile application that can be installedd in IOS or android devices. The app should have a clean and modern design. The app should have a QR scanner feature that can scan QR codes and display the information in a user-friendly manner.    
+Need
+Signup screen with Name (As PEr Aadhar Card), Email, Mobile Number, Password, 
+Login screen with Email and Password
+Home screen
+List of categories, list of QR codes genereated per category in horizontally scrollable list
+Icon for user to create a item under any given category or custome category
+
+Each item detail PAge should have 
+category
+Name
+Description
+QR Code (Will be auto generated and displayed once teh item is publihsed)
+Status (Published or Draft)
+Display Type (Each type is configured to show specific information after scanning QR code) like
+ID => Name and phonenumber
+Lost => Messgae, reply (should be able to send message to the user along with location)
+and any other type seems suitable
+
+Scan history
+
+Right Top should have user profile icon. lcikced should slike minal details along with login.
+Button click should display full page profile detailsProfile page should have anility to upload Aadhar photo. Verfifcation tem will verify async and give blue tick if verified.
+
+
+Once teh Qr is generated, it should be stored in the database and can be accessed by the user. 
+The QR code if scanned by any person, the system should log the scan timestamp and any details if user is logged in, if not then annonymous.
+
+
+This si the basic idea, I want you to build it full and complete without any gaps, test throurghly that all features are working.
+please also improvise if anything seems better.
+Pelase ask any questions if any. before implemenmtation starts.
