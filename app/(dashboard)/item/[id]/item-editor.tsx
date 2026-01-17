@@ -23,153 +23,355 @@ export default function ItemEditor({ item, user }: { item: any, user: any }) {
         return '';
     };
 
-    const isEditing = selectedType !== item.type;
+    const typeOptions = [
+        { value: 'ID', label: 'ID Card', icon: '🪪' },
+        { value: 'LOST', label: 'Lost & Found', icon: '🔍' },
+        { value: 'CUSTOM', label: 'Custom', icon: '✨' }
+    ];
 
     return (
-        <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <h3 style={{ fontSize: '14px', textTransform: 'uppercase', color: 'var(--text-light)', margin: 0 }}>Content Data</h3>
+        <div>
+            {/* Type Selector */}
+            <div style={{ marginBottom: '24px' }}>
+                <h3 style={{
+                    fontSize: '18px',
+                    fontWeight: 700,
+                    marginBottom: '16px',
+                    color: 'var(--text-main)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px'
+                }}>
+                    <span style={{ fontSize: '20px' }}>🎯</span>
+                    QR Code Type
+                </h3>
 
-                {/* Type Switcher / Label Selector */}
-                <div style={{ display: 'flex', gap: '8px' }}>
-                    {['ID', 'LOST', 'CUSTOM'].map((type) => (
+                <div style={{ display: 'grid', gap: '12px' }}>
+                    {typeOptions.map((option) => (
                         <button
-                            key={type}
+                            key={option.value}
                             type="button"
-                            onClick={() => setSelectedType(type)}
+                            onClick={() => setSelectedType(option.value)}
                             style={{
-                                padding: '4px 12px',
-                                borderRadius: '999px',
-                                border: '1px solid',
-                                fontSize: '12px',
-                                fontWeight: 600,
+                                padding: '16px 20px',
+                                borderRadius: 'var(--radius-md)',
+                                border: selectedType === option.value
+                                    ? '3px solid var(--primary)'
+                                    : '2px solid var(--border-color)',
+                                background: selectedType === option.value
+                                    ? 'var(--primary-subtle)'
+                                    : 'white',
                                 cursor: 'pointer',
-                                backgroundColor: selectedType === type ? 'var(--primary)' : 'transparent',
-                                color: selectedType === type ? 'white' : 'var(--text-muted)',
-                                borderColor: selectedType === type ? 'var(--primary)' : 'var(--border-color)',
                                 transition: 'all 0.2s',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px',
+                                textAlign: 'left'
                             }}
                         >
-                            {type === 'ID' && 'ID Card'}
-                            {type === 'LOST' && 'Lost & Found'}
-                            {type === 'CUSTOM' && 'Custom'}
+                            <div style={{
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: 'var(--radius-sm)',
+                                background: selectedType === option.value
+                                    ? 'var(--primary)'
+                                    : 'var(--bg-subtle)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '20px',
+                                flexShrink: 0
+                            }}>
+                                {option.icon}
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <div style={{
+                                    fontSize: '15px',
+                                    fontWeight: 700,
+                                    color: 'var(--text-main)'
+                                }}>
+                                    {option.label}
+                                </div>
+                            </div>
+                            {selectedType === option.value && (
+                                <div style={{
+                                    width: '20px',
+                                    height: '20px',
+                                    borderRadius: '50%',
+                                    background: 'var(--primary)',
+                                    color: 'white',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '12px',
+                                    fontWeight: 700
+                                }}>
+                                    ✓
+                                </div>
+                            )}
                         </button>
                     ))}
                 </div>
             </div>
 
-            {/* If type matches DB, show read-only view. UNLESS user explicitly wants to edit? 
-               The prompt says "once selected, then missing field should popup". 
-               So if I select the *current* type, I should just see the current data?
-               But how do I edit the current data then? 
-               Maybe "missing fields" implies only when switching?
-               "Instead of edit item button... option to select a label... once selected... missing field should popup".
-               This phrasing suggests the "Select a Label" IS the edit entry point.
-               If I click the label I'm already on, it should probably stay as is.
-               But if I want to edit the current text?
-               Let's assume "Select a Label" acts as a tab switcher. 
-               If I'm on "ID", I see the ID form. If I'm on "Lost", I see the Lost form.
-               If the form matches the DB, I show the values. 
-               If I change values, I can republish.
-               
-               Actually, "missing field should popup" suggests the fields are HIDDEN until I switch?
-               Let's make it intuitive. Always show the fields for the Selected Type.
-               If it matches DB, it's just the current values.
-               If it's a new type, it's empty/prefilled.
-               And because it's "Editor", let's make them inputs. 
-            */}
-
-            <form action={formAction}>
+            {/* Content Form */}
+            <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 <input type="hidden" name="id" value={item.id} />
                 <input type="hidden" name="name" value={item.name} />
                 <input type="hidden" name="description" value={item.description || ''} />
                 <input type="hidden" name="category" value={item.categoryId} />
                 <input type="hidden" name="type" value={selectedType} />
 
-                <div style={{ display: 'grid', gap: '12px' }}>
+                <div>
+                    <h3 style={{
+                        fontSize: '18px',
+                        fontWeight: 700,
+                        marginBottom: '16px',
+                        color: 'var(--text-main)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px'
+                    }}>
+                        <span style={{ fontSize: '20px' }}>💬</span>
+                        Content Data
+                    </h3>
 
-                    {selectedType === 'ID' && (
-                        <>
-                            <div className="input-group">
-                                <label className="input-label">Display Name</label>
-                                <input
-                                    type="text"
-                                    name="payload_name"
-                                    className="input"
-                                    placeholder="Your Name"
-                                    required
-                                    defaultValue={getValue('name', 'ID')}
-                                />
-                            </div>
-                            <div className="input-group">
-                                <label className="input-label">Phone Number</label>
-                                <input
-                                    type="tel"
-                                    name="payload_phone"
-                                    className="input"
-                                    placeholder="+91..."
-                                    required
-                                    defaultValue={getValue('phone', 'ID')}
-                                />
-                            </div>
-                        </>
-                    )}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                        {selectedType === 'ID' && (
+                            <>
+                                <div>
+                                    <label style={{
+                                        fontSize: '13px',
+                                        fontWeight: 600,
+                                        color: 'var(--text-muted)',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.05em',
+                                        display: 'block',
+                                        marginBottom: '10px'
+                                    }}>
+                                        Display Name *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="payload_name"
+                                        placeholder="Your Full Name"
+                                        required
+                                        defaultValue={getValue('name', 'ID')}
+                                        style={{
+                                            width: '100%',
+                                            padding: '14px 16px',
+                                            fontSize: '15px',
+                                            borderRadius: 'var(--radius-md)',
+                                            border: '2px solid var(--border-color)',
+                                            background: 'white',
+                                            color: 'var(--text-main)',
+                                            fontWeight: 500,
+                                            transition: 'all 0.2s',
+                                            outline: 'none'
+                                        }}
+                                        onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                                        onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{
+                                        fontSize: '13px',
+                                        fontWeight: 600,
+                                        color: 'var(--text-muted)',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.05em',
+                                        display: 'block',
+                                        marginBottom: '10px'
+                                    }}>
+                                        Phone Number *
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        name="payload_phone"
+                                        placeholder="+91 XXXXX XXXXX"
+                                        required
+                                        defaultValue={getValue('phone', 'ID')}
+                                        style={{
+                                            width: '100%',
+                                            padding: '14px 16px',
+                                            fontSize: '15px',
+                                            borderRadius: 'var(--radius-md)',
+                                            border: '2px solid var(--border-color)',
+                                            background: 'white',
+                                            color: 'var(--text-main)',
+                                            fontWeight: 500,
+                                            transition: 'all 0.2s',
+                                            outline: 'none'
+                                        }}
+                                        onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                                        onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
+                                    />
+                                </div>
+                            </>
+                        )}
 
-                    {selectedType === 'LOST' && (
-                        <>
-                            <div className="input-group">
-                                <label className="input-label">Message for Finder</label>
+                        {selectedType === 'LOST' && (
+                            <>
+                                <div>
+                                    <label style={{
+                                        fontSize: '13px',
+                                        fontWeight: 600,
+                                        color: 'var(--text-muted)',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.05em',
+                                        display: 'block',
+                                        marginBottom: '10px'
+                                    }}>
+                                        Message for Finder *
+                                    </label>
+                                    <textarea
+                                        name="payload_message"
+                                        rows={4}
+                                        placeholder="Please return this item to..."
+                                        required
+                                        defaultValue={getValue('message', 'LOST')}
+                                        style={{
+                                            width: '100%',
+                                            padding: '14px 16px',
+                                            fontSize: '15px',
+                                            borderRadius: 'var(--radius-md)',
+                                            border: '2px solid var(--border-color)',
+                                            background: 'white',
+                                            color: 'var(--text-main)',
+                                            fontWeight: 500,
+                                            transition: 'all 0.2s',
+                                            outline: 'none',
+                                            resize: 'vertical',
+                                            fontFamily: 'inherit'
+                                        }}
+                                        onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                                        onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{
+                                        fontSize: '13px',
+                                        fontWeight: 600,
+                                        color: 'var(--text-muted)',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.05em',
+                                        display: 'block',
+                                        marginBottom: '10px'
+                                    }}>
+                                        Contact Info (Optional)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="payload_contact"
+                                        placeholder="Email or Phone Number"
+                                        defaultValue={getValue('contact', 'LOST')}
+                                        style={{
+                                            width: '100%',
+                                            padding: '14px 16px',
+                                            fontSize: '15px',
+                                            borderRadius: 'var(--radius-md)',
+                                            border: '2px solid var(--border-color)',
+                                            background: 'white',
+                                            color: 'var(--text-main)',
+                                            fontWeight: 500,
+                                            transition: 'all 0.2s',
+                                            outline: 'none'
+                                        }}
+                                        onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                                        onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
+                                    />
+                                </div>
+                            </>
+                        )}
+
+                        {selectedType === 'CUSTOM' && (
+                            <div>
+                                <label style={{
+                                    fontSize: '13px',
+                                    fontWeight: 600,
+                                    color: 'var(--text-muted)',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.05em',
+                                    display: 'block',
+                                    marginBottom: '10px'
+                                }}>
+                                    Custom Content *
+                                </label>
                                 <textarea
-                                    name="payload_message"
-                                    className="input"
-                                    rows={3}
-                                    placeholder="Please return this item to..."
+                                    name="payload_content"
+                                    rows={5}
+                                    placeholder="Enter any text, links, or information..."
                                     required
-                                    defaultValue={getValue('message', 'LOST')}
-                                ></textarea>
-                            </div>
-                            <div className="input-group">
-                                <label className="input-label">Contact Info (Optional)</label>
-                                <input
-                                    type="text"
-                                    name="payload_contact"
-                                    className="input"
-                                    placeholder="Email or Phone to show"
-                                    defaultValue={getValue('contact', 'LOST')}
+                                    defaultValue={getValue('content', 'CUSTOM')}
+                                    style={{
+                                        width: '100%',
+                                        padding: '14px 16px',
+                                        fontSize: '15px',
+                                        borderRadius: 'var(--radius-md)',
+                                        border: '2px solid var(--border-color)',
+                                        background: 'white',
+                                        color: 'var(--text-main)',
+                                        fontWeight: 500,
+                                        transition: 'all 0.2s',
+                                        outline: 'none',
+                                        resize: 'vertical',
+                                        fontFamily: 'inherit'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                                    onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
                                 />
                             </div>
-                        </>
-                    )}
-
-                    {selectedType === 'CUSTOM' && (
-                        <div className="input-group">
-                            <label className="input-label">Custom Content</label>
-                            <textarea
-                                name="payload_content"
-                                className="input"
-                                rows={4}
-                                placeholder="Any text or info..."
-                                required
-                                defaultValue={getValue('content', 'CUSTOM')}
-                            ></textarea>
-                        </div>
-                    )}
-
+                        )}
+                    </div>
                 </div>
 
-                {state?.error && <p className="error-msg" style={{ marginTop: '1rem' }}>{state.error}</p>}
+                {state?.error && (
+                    <div style={{
+                        padding: '14px 16px',
+                        background: '#fee2e2',
+                        border: '2px solid #fecaca',
+                        borderRadius: 'var(--radius-md)',
+                        color: '#991b1b',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px'
+                    }}>
+                        <span>⚠️</span>
+                        {state.error}
+                    </div>
+                )}
 
-                {/* Only show Republish if something changed or we effectively want to save edits */}
                 <button
                     type="submit"
-                    className="btn"
                     disabled={isPending}
                     style={{
-                        marginTop: '1.5rem',
                         width: '100%',
-                        display: 'block' // Always allow republishing/editing
+                        padding: '16px',
+                        background: isPending
+                            ? '#9ca3af'
+                            : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: 'var(--radius-md)',
+                        fontSize: '16px',
+                        fontWeight: 700,
+                        cursor: isPending ? 'not-allowed' : 'pointer',
+                        boxShadow: isPending
+                            ? 'none'
+                            : '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                        transition: 'all 0.2s',
+                        opacity: isPending ? 0.6 : 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px'
                     }}
                 >
+                    <span style={{ fontSize: '18px' }}>
+                        {isPending ? '⏳' : '🔄'}
+                    </span>
                     {isPending ? 'Publishing...' : 'Republish / Update'}
                 </button>
             </form>
