@@ -5,8 +5,17 @@ import { verifyToken } from './lib/auth';
 export async function middleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
 
-    // Define public paths
-    const isPublicPath = path === '/login' || path === '/signup' || path.startsWith('/q/');
+    // Define public paths - QR code pages should be publicly accessible
+    const isPublicPath =
+        path === '/login' ||
+        path === '/signup' ||
+        path.startsWith('/q/') ||
+        path.startsWith('/api/') ||
+        path.startsWith('/_next/') ||
+        path.startsWith('/icon-') ||
+        path.startsWith('/apple-touch-icon') ||
+        path === '/manifest.json' ||
+        path === '/favicon.ico';
 
     const token = request.cookies.get('session')?.value;
     let session = null;
@@ -35,8 +44,8 @@ export const config = {
          * - api (API routes)
          * - _next/static (static files)
          * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
+         * - favicon.ico, manifest.json, icons (PWA assets)
          */
-        '/((?!api|_next/static|_next/image|favicon.ico).*)',
+        '/((?!api|_next/static|_next/image|favicon.ico|manifest.json|icon-).*)',
     ],
 };
