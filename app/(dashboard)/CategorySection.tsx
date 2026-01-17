@@ -79,10 +79,14 @@ export default function CategorySection({ category }: { category: any }) {
                         display: 'flex',
                         gap: '12px',
                         overflowX: 'auto',
+                        overflowY: 'hidden',
                         paddingBottom: '8px',
                         scrollbarWidth: 'thin',
-                        scrollbarColor: 'var(--border-color) transparent'
-                    }}>
+                        scrollbarColor: 'var(--border-color) transparent',
+                        WebkitOverflowScrolling: 'touch',
+                        scrollSnapType: 'x proximity',
+                        msOverflowStyle: '-ms-autohiding-scrollbar'
+                    } as React.CSSProperties}>
                         {category.items.map((item: any) => (
                             <Link
                                 href={`/item/${item.id}`}
