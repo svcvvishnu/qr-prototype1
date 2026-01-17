@@ -69,155 +69,152 @@ export default function CategorySection({ category }: { category: any }) {
 
             {/* Items Horizontal Scroll - Collapsible */}
             <div style={{
-                display: 'grid',
-                gridTemplateRows: isExpanded ? '1fr' : '0fr',
-                transition: 'grid-template-rows 0.3s ease-out',
-                overflow: 'hidden'
+                maxHeight: isExpanded ? '500px' : '0',
+                overflow: 'hidden',
+                transition: 'max-height 0.3s ease-out'
             }}>
-                <div style={{ minHeight: 0 }}>
-                    <div style={{
-                        display: 'flex',
-                        gap: '12px',
-                        overflowX: 'auto',
-                        overflowY: 'hidden',
-                        paddingBottom: '8px',
-                        scrollbarWidth: 'thin',
-                        scrollbarColor: 'var(--border-color) transparent',
-                        WebkitOverflowScrolling: 'touch',
-                        scrollSnapType: 'x proximity',
-                        msOverflowStyle: '-ms-autohiding-scrollbar'
-                    } as React.CSSProperties}>
-                        {category.items.map((item: any) => (
-                            <Link
-                                href={`/item/${item.id}`}
-                                key={item.id}
-                                style={{
-                                    background: 'white',
-                                    borderRadius: 'var(--radius-lg)',
-                                    padding: '16px',
-                                    border: '1px solid var(--border-color)',
-                                    boxShadow: 'var(--shadow-sm)',
-                                    transition: 'all 0.2s',
-                                    textDecoration: 'none',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: '12px',
-                                    minWidth: '240px',
-                                    maxWidth: '240px',
-                                    flexShrink: 0
-                                }}
-                            >
-                                {/* Header */}
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                                    <div style={{
-                                        width: '44px',
-                                        height: '44px',
-                                        borderRadius: 'var(--radius-md)',
-                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        fontSize: '22px'
-                                    }}>
-                                        {item.type === 'LOST' ? '🔍' : item.type === 'ID' ? '🪪' : '✨'}
-                                    </div>
-                                    {item.status === 'PUBLISHED' && (
-                                        <span style={{
-                                            padding: '4px 8px',
-                                            background: '#d1fae5',
-                                            color: '#065f46',
-                                            borderRadius: 'var(--radius-full)',
-                                            fontSize: '11px',
-                                            fontWeight: 600
-                                        }}>
-                                            ● Active
-                                        </span>
-                                    )}
-                                </div>
-
-                                {/* Content */}
-                                <div>
-                                    <h3 style={{
-                                        fontSize: '15px',
-                                        fontWeight: 700,
-                                        marginBottom: '4px',
-                                        color: 'var(--text-main)',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap'
-                                    }}>
-                                        {item.name}
-                                    </h3>
-                                    <p style={{
-                                        fontSize: '13px',
-                                        color: 'var(--text-muted)',
-                                        lineHeight: 1.4,
-                                        display: '-webkit-box',
-                                        WebkitLineClamp: 2,
-                                        WebkitBoxOrient: 'vertical',
-                                        overflow: 'hidden',
-                                        minHeight: '36px'
-                                    }}>
-                                        {item.description || "No description provided."}
-                                    </p>
-                                </div>
-
-                                {/* Footer */}
-                                <div style={{
-                                    paddingTop: '12px',
-                                    borderTop: '1px solid var(--border-color)',
-                                    fontSize: '12px',
-                                    color: 'var(--text-muted)',
-                                    fontWeight: 500,
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center'
-                                }}>
-                                    <span>{new Date(item.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                                    <span style={{ color: 'var(--primary)', fontWeight: 600 }}>→</span>
-                                </div>
-                            </Link>
-                        ))}
-
-                        {/* Add New Card */}
+                <div style={{
+                    display: 'flex',
+                    gap: '12px',
+                    overflowX: 'auto',
+                    overflowY: 'hidden',
+                    paddingBottom: '8px',
+                    scrollbarWidth: 'thin',
+                    scrollbarColor: 'var(--border-color) transparent',
+                    WebkitOverflowScrolling: 'touch',
+                    touchAction: 'pan-x',
+                    msOverflowStyle: '-ms-autohiding-scrollbar'
+                } as React.CSSProperties}>
+                    {category.items.map((item: any) => (
                         <Link
-                            href={`/create?cat=${category.id}`}
+                            href={`/item/${item.id}`}
+                            key={item.id}
                             style={{
-                                background: 'transparent',
+                                background: 'white',
                                 borderRadius: 'var(--radius-lg)',
                                 padding: '16px',
-                                border: '2px dashed var(--border-color)',
+                                border: '1px solid var(--border-color)',
+                                boxShadow: 'var(--shadow-sm)',
+                                transition: 'all 0.2s',
+                                textDecoration: 'none',
                                 display: 'flex',
                                 flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '8px',
+                                gap: '12px',
                                 minWidth: '240px',
                                 maxWidth: '240px',
-                                minHeight: '180px',
-                                flexShrink: 0,
-                                textDecoration: 'none',
-                                transition: 'all 0.2s',
-                                color: 'var(--text-muted)'
+                                flexShrink: 0
                             }}
                         >
-                            <div style={{
-                                width: '44px',
-                                height: '44px',
-                                borderRadius: '50%',
-                                background: 'var(--bg-subtle)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '20px'
-                            }}>
-                                ➕
+                            {/* Header */}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                                <div style={{
+                                    width: '44px',
+                                    height: '44px',
+                                    borderRadius: 'var(--radius-md)',
+                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '22px'
+                                }}>
+                                    {item.type === 'LOST' ? '🔍' : item.type === 'ID' ? '🪪' : '✨'}
+                                </div>
+                                {item.status === 'PUBLISHED' && (
+                                    <span style={{
+                                        padding: '4px 8px',
+                                        background: '#d1fae5',
+                                        color: '#065f46',
+                                        borderRadius: 'var(--radius-full)',
+                                        fontSize: '11px',
+                                        fontWeight: 600
+                                    }}>
+                                        ● Active
+                                    </span>
+                                )}
                             </div>
-                            <span style={{ fontSize: '13px', fontWeight: 600 }}>
-                                Add Item
-                            </span>
+
+                            {/* Content */}
+                            <div>
+                                <h3 style={{
+                                    fontSize: '15px',
+                                    fontWeight: 700,
+                                    marginBottom: '4px',
+                                    color: 'var(--text-main)',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap'
+                                }}>
+                                    {item.name}
+                                </h3>
+                                <p style={{
+                                    fontSize: '13px',
+                                    color: 'var(--text-muted)',
+                                    lineHeight: 1.4,
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical',
+                                    overflow: 'hidden',
+                                    minHeight: '36px'
+                                }}>
+                                    {item.description || "No description provided."}
+                                </p>
+                            </div>
+
+                            {/* Footer */}
+                            <div style={{
+                                paddingTop: '12px',
+                                borderTop: '1px solid var(--border-color)',
+                                fontSize: '12px',
+                                color: 'var(--text-muted)',
+                                fontWeight: 500,
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center'
+                            }}>
+                                <span>{new Date(item.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                                <span style={{ color: 'var(--primary)', fontWeight: 600 }}>→</span>
+                            </div>
                         </Link>
-                    </div>
+                    ))}
+
+                    {/* Add New Card */}
+                    <Link
+                        href={`/create?cat=${category.id}`}
+                        style={{
+                            background: 'transparent',
+                            borderRadius: 'var(--radius-lg)',
+                            padding: '16px',
+                            border: '2px dashed var(--border-color)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            minWidth: '240px',
+                            maxWidth: '240px',
+                            minHeight: '180px',
+                            flexShrink: 0,
+                            textDecoration: 'none',
+                            transition: 'all 0.2s',
+                            color: 'var(--text-muted)'
+                        }}
+                    >
+                        <div style={{
+                            width: '44px',
+                            height: '44px',
+                            borderRadius: '50%',
+                            background: 'var(--bg-subtle)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '20px'
+                        }}>
+                            ➕
+                        </div>
+                        <span style={{ fontSize: '13px', fontWeight: 600 }}>
+                            Add Item
+                        </span>
+                    </Link>
                 </div>
             </div>
         </div>
