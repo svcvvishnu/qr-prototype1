@@ -23,16 +23,16 @@ export default async function DashboardHome() {
     const totalItems = categories.reduce((sum, cat) => sum + cat.items.length, 0);
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* Header with Stats */}
             <div style={{
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 borderRadius: 'var(--radius-lg)',
-                padding: '32px',
+                padding: '24px',
                 color: 'white',
                 position: 'relative',
                 overflow: 'hidden',
-                boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)'
+                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
             }}>
                 {/* Decorative elements */}
                 <div style={{
@@ -47,25 +47,25 @@ export default async function DashboardHome() {
                 }} />
 
                 <div style={{ position: 'relative', zIndex: 1 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '16px' }}>
                         <div>
-                            <h1 style={{ fontSize: '28px', fontWeight: 800, marginBottom: '8px', color: 'white' }}>
+                            <h1 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '6px', color: 'white' }}>
                                 Welcome back, {session.name}! 👋
                             </h1>
-                            <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '15px' }}>
+                            <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '14px' }}>
                                 Manage your QR codes and track scans
                             </p>
                         </div>
                         <Link href="/profile" style={{
-                            width: '48px',
-                            height: '48px',
+                            width: '40px',
+                            height: '40px',
                             borderRadius: '50%',
                             background: 'white',
                             color: '#667eea',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '20px',
+                            fontSize: '18px',
                             fontWeight: 700,
                             boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
                             textDecoration: 'none'
@@ -75,32 +75,32 @@ export default async function DashboardHome() {
                     </div>
 
                     {/* Stats */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
                         <div style={{
                             background: 'rgba(255, 255, 255, 0.15)',
                             backdropFilter: 'blur(10px)',
                             borderRadius: 'var(--radius-md)',
-                            padding: '20px',
+                            padding: '16px',
                             border: '1px solid rgba(255, 255, 255, 0.2)'
                         }}>
-                            <div style={{ fontSize: '32px', fontWeight: 800, marginBottom: '4px' }}>
+                            <div style={{ fontSize: '24px', fontWeight: 800, marginBottom: '2px' }}>
                                 {totalItems}
                             </div>
-                            <div style={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.9)', fontWeight: 500 }}>
-                                Total QR Codes
+                            <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.9)', fontWeight: 500 }}>
+                                QR Codes
                             </div>
                         </div>
                         <div style={{
                             background: 'rgba(255, 255, 255, 0.15)',
                             backdropFilter: 'blur(10px)',
                             borderRadius: 'var(--radius-md)',
-                            padding: '20px',
+                            padding: '16px',
                             border: '1px solid rgba(255, 255, 255, 0.2)'
                         }}>
-                            <div style={{ fontSize: '32px', fontWeight: 800, marginBottom: '4px' }}>
+                            <div style={{ fontSize: '24px', fontWeight: 800, marginBottom: '2px' }}>
                                 {categories.length}
                             </div>
-                            <div style={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.9)', fontWeight: 500 }}>
+                            <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.9)', fontWeight: 500 }}>
                                 Categories
                             </div>
                         </div>
@@ -144,7 +144,7 @@ export default async function DashboardHome() {
                     </Link>
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     {categories.map((cat) => (
                         <CategorySection key={cat.id} category={cat} />
                     ))}

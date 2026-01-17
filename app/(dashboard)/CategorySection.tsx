@@ -16,8 +16,8 @@ export default function CategorySection({ category }: { category: any }) {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    marginBottom: '16px',
-                    padding: '16px 20px',
+                    marginBottom: '12px',
+                    padding: '12px 16px',
                     background: 'white',
                     border: '1px solid var(--border-color)',
                     borderRadius: 'var(--radius-md)',
@@ -35,30 +35,30 @@ export default function CategorySection({ category }: { category: any }) {
                 }}
             >
                 <h2 style={{
-                    fontSize: '20px',
+                    fontSize: '16px',
                     fontWeight: 700,
                     color: 'var(--text-main)',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '12px',
+                    gap: '10px',
                     margin: 0
                 }}>
-                    <span style={{ fontSize: '24px' }}>📁</span>
+                    <span style={{ fontSize: '20px' }}>📁</span>
                     {category.name}
                 </h2>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <span style={{
-                        padding: '6px 14px',
+                        padding: '4px 10px',
                         background: 'var(--bg-subtle)',
                         borderRadius: 'var(--radius-full)',
-                        fontSize: '13px',
+                        fontSize: '12px',
                         fontWeight: 600,
                         color: 'var(--text-muted)'
                     }}>
-                        {category.items.length} {category.items.length === 1 ? 'item' : 'items'}
+                        {category.items.length}
                     </span>
                     <span style={{
-                        fontSize: '20px',
+                        fontSize: '16px',
                         transition: 'transform 0.2s',
                         transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'
                     }}>
@@ -67,7 +67,7 @@ export default function CategorySection({ category }: { category: any }) {
                 </div>
             </button>
 
-            {/* Items Grid - Collapsible */}
+            {/* Items Horizontal Scroll - Collapsible */}
             <div style={{
                 display: 'grid',
                 gridTemplateRows: isExpanded ? '1fr' : '0fr',
@@ -76,10 +76,12 @@ export default function CategorySection({ category }: { category: any }) {
             }}>
                 <div style={{ minHeight: 0 }}>
                     <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                        gap: '16px',
-                        paddingBottom: isExpanded ? '0' : '0'
+                        display: 'flex',
+                        gap: '12px',
+                        overflowX: 'auto',
+                        paddingBottom: '8px',
+                        scrollbarWidth: 'thin',
+                        scrollbarColor: 'var(--border-color) transparent'
                     }}>
                         {category.items.map((item: any) => (
                             <Link
@@ -88,37 +90,40 @@ export default function CategorySection({ category }: { category: any }) {
                                 style={{
                                     background: 'white',
                                     borderRadius: 'var(--radius-lg)',
-                                    padding: '24px',
+                                    padding: '16px',
                                     border: '1px solid var(--border-color)',
                                     boxShadow: 'var(--shadow-sm)',
                                     transition: 'all 0.2s',
                                     textDecoration: 'none',
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    gap: '16px'
+                                    gap: '12px',
+                                    minWidth: '240px',
+                                    maxWidth: '240px',
+                                    flexShrink: 0
                                 }}
                             >
                                 {/* Header */}
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                                     <div style={{
-                                        width: '56px',
-                                        height: '56px',
+                                        width: '44px',
+                                        height: '44px',
                                         borderRadius: 'var(--radius-md)',
                                         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        fontSize: '28px'
+                                        fontSize: '22px'
                                     }}>
                                         {item.type === 'LOST' ? '🔍' : item.type === 'ID' ? '🪪' : '✨'}
                                     </div>
                                     {item.status === 'PUBLISHED' && (
                                         <span style={{
-                                            padding: '6px 12px',
+                                            padding: '4px 8px',
                                             background: '#d1fae5',
                                             color: '#065f46',
                                             borderRadius: 'var(--radius-full)',
-                                            fontSize: '12px',
+                                            fontSize: '11px',
                                             fontWeight: 600
                                         }}>
                                             ● Active
@@ -129,9 +134,9 @@ export default function CategorySection({ category }: { category: any }) {
                                 {/* Content */}
                                 <div>
                                     <h3 style={{
-                                        fontSize: '18px',
+                                        fontSize: '15px',
                                         fontWeight: 700,
-                                        marginBottom: '6px',
+                                        marginBottom: '4px',
                                         color: 'var(--text-main)',
                                         overflow: 'hidden',
                                         textOverflow: 'ellipsis',
@@ -140,13 +145,14 @@ export default function CategorySection({ category }: { category: any }) {
                                         {item.name}
                                     </h3>
                                     <p style={{
-                                        fontSize: '14px',
+                                        fontSize: '13px',
                                         color: 'var(--text-muted)',
-                                        lineHeight: 1.5,
+                                        lineHeight: 1.4,
                                         display: '-webkit-box',
                                         WebkitLineClamp: 2,
                                         WebkitBoxOrient: 'vertical',
-                                        overflow: 'hidden'
+                                        overflow: 'hidden',
+                                        minHeight: '36px'
                                     }}>
                                         {item.description || "No description provided."}
                                     </p>
@@ -154,17 +160,17 @@ export default function CategorySection({ category }: { category: any }) {
 
                                 {/* Footer */}
                                 <div style={{
-                                    paddingTop: '16px',
+                                    paddingTop: '12px',
                                     borderTop: '1px solid var(--border-color)',
+                                    fontSize: '12px',
+                                    color: 'var(--text-muted)',
+                                    fontWeight: 500,
                                     display: 'flex',
                                     justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    fontSize: '13px',
-                                    color: 'var(--text-muted)',
-                                    fontWeight: 500
+                                    alignItems: 'center'
                                 }}>
-                                    <span>Updated {new Date(item.updatedAt).toLocaleDateString()}</span>
-                                    <span style={{ color: 'var(--primary)', fontWeight: 600 }}>View →</span>
+                                    <span>{new Date(item.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                                    <span style={{ color: 'var(--primary)', fontWeight: 600 }}>→</span>
                                 </div>
                             </Link>
                         ))}
@@ -175,33 +181,36 @@ export default function CategorySection({ category }: { category: any }) {
                             style={{
                                 background: 'transparent',
                                 borderRadius: 'var(--radius-lg)',
-                                padding: '24px',
+                                padding: '16px',
                                 border: '2px dashed var(--border-color)',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                gap: '12px',
-                                minHeight: '220px',
+                                gap: '8px',
+                                minWidth: '240px',
+                                maxWidth: '240px',
+                                minHeight: '180px',
+                                flexShrink: 0,
                                 textDecoration: 'none',
                                 transition: 'all 0.2s',
                                 color: 'var(--text-muted)'
                             }}
                         >
                             <div style={{
-                                width: '56px',
-                                height: '56px',
+                                width: '44px',
+                                height: '44px',
                                 borderRadius: '50%',
                                 background: 'var(--bg-subtle)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '24px'
+                                fontSize: '20px'
                             }}>
                                 ➕
                             </div>
-                            <span style={{ fontSize: '15px', fontWeight: 600 }}>
-                                Add to {category.name}
+                            <span style={{ fontSize: '13px', fontWeight: 600 }}>
+                                Add Item
                             </span>
                         </Link>
                     </div>
