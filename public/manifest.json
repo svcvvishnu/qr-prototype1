@@ -1,21 +1,57 @@
 {
-    "name": "QR Master",
+    "name": "QR Master - QR Code Manager",
     "short_name": "QR Master",
-    "description": "Manage all your QR codes in one place.",
+    "description": "Create, manage, and track your QR codes with ease. Digital identity cards, lost & found tags, and custom QR codes all in one place.",
     "start_url": "/",
+    "scope": "/",
     "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#6366f1",
+    "orientation": "portrait-primary",
+    "background_color": "#f8fafc",
+    "theme_color": "#667eea",
     "icons": [
         {
-            "src": "/globe.svg",
+            "src": "/icon-192.png",
             "sizes": "192x192",
-            "type": "image/svg+xml"
+            "type": "image/png",
+            "purpose": "any maskable"
         },
         {
-            "src": "/globe.svg",
+            "src": "/icon-512.png",
             "sizes": "512x512",
-            "type": "image/svg+xml"
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "productivity",
+        "utilities",
+        "business"
+    ],
+    "screenshots": [],
+    "shortcuts": [
+        {
+            "name": "Create QR Code",
+            "short_name": "Create",
+            "description": "Create a new QR code",
+            "url": "/create",
+            "icons": [
+                {
+                    "src": "/icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Dashboard",
+            "short_name": "Home",
+            "description": "View all your QR codes",
+            "url": "/",
+            "icons": [
+                {
+                    "src": "/icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
         }
     ]
 }
