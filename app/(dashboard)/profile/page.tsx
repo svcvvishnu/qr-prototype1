@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { getSession, logout } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import ProfileForm from './form';
+import LogoutButton from './LogoutButton';
 
 export default async function ProfilePage() {
     const session = await getSession();
@@ -12,10 +13,22 @@ export default async function ProfilePage() {
     });
 
     return (
-        <div className="container" style={{ padding: '0', maxWidth: '600px' }}>
+        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
             <div style={{ marginBottom: '32px' }}>
-                <h1 style={{ fontSize: '24px' }}>Profile</h1>
-                <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '4px' }}>Manage your account settings.</p>
+                <h1 style={{
+                    fontSize: '32px',
+                    fontWeight: 800,
+                    marginBottom: '8px',
+                    color: 'var(--text-main)'
+                }}>
+                    Profile
+                </h1>
+                <p style={{
+                    color: 'var(--text-muted)',
+                    fontSize: '15px'
+                }}>
+                    Manage your account settings and preferences
+                </p>
             </div>
             <ProfileForm user={user} />
 
@@ -23,10 +36,12 @@ export default async function ProfilePage() {
                 'use server';
                 await logout();
                 redirect('/login');
-            }}>
-                <button type="submit" className="btn-secondary" style={{ marginTop: '2rem', width: '100%', borderColor: 'var(--error)', color: 'var(--error)' }}>
-                    Log Out
-                </button>
+            }} style={{ marginTop: '24px' }}>
+                <LogoutButton action={async () => {
+                    'use server';
+                    await logout();
+                    redirect('/login');
+                }} />
             </form>
         </div>
     );
