@@ -13,6 +13,10 @@ export default async function ProfilePage() {
 
     return (
         <div className="container" style={{ padding: '0', maxWidth: '600px' }}>
+            <div style={{ marginBottom: '32px' }}>
+                <h1 style={{ fontSize: '24px' }}>Profile</h1>
+                <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '4px' }}>Manage your account settings.</p>
+            </div>
             <ProfileForm user={user} />
 
             <form action={async () => {

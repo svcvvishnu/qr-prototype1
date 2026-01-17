@@ -27,7 +27,10 @@ export default async function CreateItemPage() {
 
     return (
         <div className="container">
-            <h1 className="title">Create New QR Code</h1>
+            <div style={{ marginBottom: '24px' }}>
+                <h1 style={{ fontSize: '24px' }}>Create New Item</h1>
+                <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '4px' }}>Generate a unique QR code for your asset.</p>
+            </div>
             <CreateItemForm categories={categories} user={user} />
         </div>
     );
