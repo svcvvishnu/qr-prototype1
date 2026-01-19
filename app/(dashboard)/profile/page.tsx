@@ -14,18 +14,18 @@ export default async function ProfilePage() {
 
     return (
         <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-            <div style={{ marginBottom: '32px' }}>
+            <div style={{ marginBottom: '20px' }}>
                 <h1 style={{
-                    fontSize: '32px',
+                    fontSize: '28px',
                     fontWeight: 800,
-                    marginBottom: '8px',
+                    marginBottom: '6px',
                     color: 'var(--text-main)'
                 }}>
                     Profile
                 </h1>
                 <p style={{
                     color: 'var(--text-muted)',
-                    fontSize: '15px'
+                    fontSize: '14px'
                 }}>
                     Manage your account settings and preferences
                 </p>
