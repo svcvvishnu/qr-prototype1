@@ -8,17 +8,20 @@ datasource db {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  email      String   @unique
-  password   String
-  name       String   // As per Aadhar
-  mobile     String   @unique
-  aadharUrl  String?
-  isVerified Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  categories Category[]
-  scans      Scan[]
+  id                Int            @id @default(autoincrement())
+  email             String         @unique
+  password          String
+  name              String         // As per Aadhar
+  mobile            String         @unique
+  aadharUrl         String?
+  isVerified        Boolean        @default(false)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  categories        Category[]
+  scans             Scan[]
+  sentMessages      Message[]      @relation("SentMessages")
+  receivedMessages  Message[]      @relation("ReceivedMessages")
+  notifications     Notification[]
 }
 
 model Category {
@@ -32,18 +35,20 @@ model Category {
 }
 
 model Item {
-  id          Int      @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   name        String
   description String?
   categoryId  Int
-  category    Category @relation(fields: [categoryId], references: [id])
-  status      String   @default("DRAFT") // DRAFT, PUBLISHED
-  type        String   // ID, LOST_AND_FOUND, CUSTOM
-  payload     String   // JSON string for specific type data
+  category    Category   @relation(fields: [categoryId], references: [id])
+  status      String     @default("DRAFT") // DRAFT, PUBLISHED
+  type        String     // ID, LOST, CUSTOM
+  payload     String     // JSON string for specific type data
   qrCodeUrl   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   scans       Scan[]
+  messages    Message[]
+  analytics   Analytics?
 }
 
 model Scan {
@@ -54,4 +59,42 @@ model Scan {
   scanner     User?    @relation(fields: [scannerId], references: [id])
   timestamp   DateTime @default(now())
   location    String?  // Optional location data
+}
+
+model Message {
+  id             Int      @id @default(autoincrement())
+  content        String
+  itemId         Int
+  item           Item     @relation(fields: [itemId], references: [id])
+  senderId       Int?     // Nullable for anonymous senders
+  sender         User?    @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId     Int      // Item owner
+  receiver       User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  senderName     String?  // For anonymous senders
+  senderContact  String?  // Email/phone for anonymous senders
+  isRead         Boolean  @default(false)
+  createdAt      DateTime @default(now())
+}
+
+model Notification {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id])
+  type          String   // MESSAGE, SCAN, SYSTEM
+  title         String
+  content       String
+  isRead        Boolean  @default(false)
+  relatedItemId Int?
+  createdAt     DateTime @default(now())
+}
+
+model Analytics {
+  id              Int      @id @default(autoincrement())
+  itemId          Int      @unique
+  item            Item     @relation(fields: [itemId], references: [id])
+  totalScans      Int      @default(0)
+  uniqueScanners  Int      @default(0)
+  messageCount    Int      @default(0)
+  lastScannedAt   DateTime?
+  updatedAt       DateTime @updatedAt
 }

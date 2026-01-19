@@ -2,11 +2,33 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function BottomNav() {
     const pathname = usePathname();
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const isActive = (path: string) => pathname === path;
+
+    // Fetch unread message count
+    useEffect(() => {
+        const fetchUnreadCount = async () => {
+            try {
+                const response = await fetch('/api/notifications?unreadOnly=true');
+                if (response.ok) {
+                    const data = await response.json();
+                    setUnreadCount(data.unreadCount || 0);
+                }
+            } catch (error) {
+                console.error('Failed to fetch unread count:', error);
+            }
+        };
+
+        fetchUnreadCount();
+        // Poll every 30 seconds
+        const interval = setInterval(fetchUnreadCount, 30000);
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <nav style={{
@@ -31,7 +53,7 @@ export default function BottomNav() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 gap: '4px',
-                color: isActive('/') || isActive('/dashboard') ? 'var(--primary)' : 'var(--text-light)', // Highlight for both if needed, but mainly /
+                color: isActive('/') || isActive('/dashboard') ? 'var(--primary)' : 'var(--text-light)',
                 transition: 'color 0.2s',
                 padding: '10px'
             }}>
@@ -40,6 +62,43 @@ export default function BottomNav() {
                     <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
                 <span style={{ fontSize: '10px', fontWeight: 600 }}>Home</span>
+            </Link>
+
+            {/* Messages */}
+            <Link href="/messages" style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+                color: isActive('/messages') ? 'var(--primary)' : 'var(--text-light)',
+                transition: 'color 0.2s',
+                padding: '10px',
+                position: 'relative'
+            }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isActive('/messages') ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                {unreadCount > 0 && (
+                    <span style={{
+                        position: 'absolute',
+                        top: '6px',
+                        right: '6px',
+                        background: '#ef4444',
+                        color: 'white',
+                        borderRadius: '50%',
+                        width: '18px',
+                        height: '18px',
+                        fontSize: '10px',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '2px solid white'
+                    }}>
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                )}
+                <span style={{ fontSize: '10px', fontWeight: 600 }}>Messages</span>
             </Link>
 
             {/* Scale effect container for FAB */}

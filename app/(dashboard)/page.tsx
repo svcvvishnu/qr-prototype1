@@ -5,21 +5,46 @@ import { redirect } from 'next/navigation';
 import CategorySection from './CategorySection';
 
 async function getData(userId: number) {
-    const categories = await prisma.category.findMany({
-        where: { userId },
-        include: {
-            items: true,
-        },
-        orderBy: { createdAt: 'desc' }
+    const [categories, analytics, messages] = await Promise.all([
+        prisma.category.findMany({
+            where: { userId },
+            include: {
+                items: true,
+            },
+            orderBy: { createdAt: 'desc' }
+        }),
+        prisma.analytics.findMany({
+            where: {
+                item: {
+                    category: {
+                        userId
+                    }
+                }
+            }
+        }),
+        prisma.message.count({
+            where: {
+                receiverId: userId
+            }
+        })
+    ]);
+
+    const totalScans = analytics.reduce((sum, a) => sum + a.totalScans, 0);
+    const unreadMessages = await prisma.message.count({
+        where: {
+            receiverId: userId,
+            isRead: false
+        }
     });
-    return categories;
+
+    return { categories, totalScans, totalMessages: messages, unreadMessages };
 }
 
 export default async function DashboardHome() {
     const session = await getSession();
     if (!session) redirect('/login');
 
-    const categories = await getData(session.userId);
+    const { categories, totalScans, totalMessages, unreadMessages } = await getData(session.userId);
     const totalItems = categories.reduce((sum, cat) => sum + cat.items.length, 0);
 
     return (
@@ -75,7 +100,7 @@ export default async function DashboardHome() {
                     </div>
 
                     {/* Stats */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '12px' }}>
                         <div style={{
                             background: 'rgba(255, 255, 255, 0.15)',
                             backdropFilter: 'blur(10px)',
@@ -98,12 +123,48 @@ export default async function DashboardHome() {
                             border: '1px solid rgba(255, 255, 255, 0.2)'
                         }}>
                             <div style={{ fontSize: '24px', fontWeight: 800, marginBottom: '2px' }}>
-                                {categories.length}
+                                {totalScans}
                             </div>
                             <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.9)', fontWeight: 500 }}>
-                                Categories
+                                Total Scans
                             </div>
                         </div>
+                        <Link href="/messages" style={{
+                            background: unreadMessages > 0 ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255, 255, 255, 0.15)',
+                            backdropFilter: 'blur(10px)',
+                            borderRadius: 'var(--radius-md)',
+                            padding: '16px',
+                            border: unreadMessages > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255, 255, 255, 0.2)',
+                            textDecoration: 'none',
+                            color: 'white',
+                            position: 'relative'
+                        }}>
+                            <div style={{ fontSize: '24px', fontWeight: 800, marginBottom: '2px' }}>
+                                {totalMessages}
+                            </div>
+                            <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.9)', fontWeight: 500 }}>
+                                Messages
+                            </div>
+                            {unreadMessages > 0 && (
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '8px',
+                                    right: '8px',
+                                    background: '#ef4444',
+                                    color: 'white',
+                                    borderRadius: '50%',
+                                    width: '20px',
+                                    height: '20px',
+                                    fontSize: '10px',
+                                    fontWeight: 700,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    {unreadMessages > 9 ? '9+' : unreadMessages}
+                                </div>
+                            )}
+                        </Link>
                     </div>
                 </div>
             </div>

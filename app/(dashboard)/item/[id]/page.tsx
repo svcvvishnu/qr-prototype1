@@ -16,6 +16,14 @@ async function getItem(id: number, userId: number) {
                 include: {
                     scanner: { select: { name: true } }
                 }
+            },
+            messages: {
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    sender: {
+                        select: { name: true, isVerified: true }
+                    }
+                }
             }
         }
     });
@@ -214,6 +222,94 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
 
                     {/* Scan History - Collapsible */}
                     <ScanHistory scans={item.scans} />
+
+                    {/* Messages Section */}
+                    {item.messages && item.messages.length > 0 && (
+                        <div style={{
+                            background: 'white',
+                            borderRadius: 'var(--radius-lg)',
+                            padding: '20px',
+                            boxShadow: 'var(--shadow-sm)',
+                            border: '1px solid var(--border-color)'
+                        }}>
+                            <h3 style={{
+                                fontSize: '16px',
+                                fontWeight: 700,
+                                marginBottom: '16px',
+                                color: 'var(--text-main)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}>
+                                💬 Messages ({item.messages.length})
+                            </h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                {item.messages.map((message) => (
+                                    <div key={message.id} style={{
+                                        padding: '12px',
+                                        background: message.isRead ? 'var(--bg-subtle)' : '#eff6ff',
+                                        borderRadius: 'var(--radius-md)',
+                                        borderLeft: message.isRead ? '3px solid var(--border-color)' : '3px solid var(--primary)'
+                                    }}>
+                                        <div style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'start',
+                                            marginBottom: '8px'
+                                        }}>
+                                            <div style={{
+                                                fontSize: '13px',
+                                                fontWeight: 600,
+                                                color: 'var(--text-main)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '6px'
+                                            }}>
+                                                {message.sender?.name || message.senderName || 'Anonymous'}
+                                                {message.sender?.isVerified && (
+                                                    <span style={{ fontSize: '14px', color: 'var(--primary)' }}>✓</span>
+                                                )}
+                                            </div>
+                                            <div style={{
+                                                fontSize: '11px',
+                                                color: 'var(--text-light)'
+                                            }}>
+                                                {new Date(message.createdAt).toLocaleDateString('en-US', {
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                })}
+                                            </div>
+                                        </div>
+                                        <p style={{
+                                            fontSize: '14px',
+                                            color: 'var(--text-main)',
+                                            lineHeight: 1.5,
+                                            marginBottom: message.senderContact ? '8px' : '0'
+                                        }}>
+                                            {message.content}
+                                        </p>
+                                        {message.senderContact && (
+                                            <div style={{
+                                                fontSize: '12px',
+                                                color: 'var(--text-muted)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '4px',
+                                                marginTop: '8px',
+                                                padding: '8px',
+                                                background: 'white',
+                                                borderRadius: 'var(--radius-sm)'
+                                            }}>
+                                                📧 {message.senderContact}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Right Column - Editor */}
