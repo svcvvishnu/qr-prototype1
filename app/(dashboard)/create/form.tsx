@@ -15,25 +15,26 @@ export default function CreateItemForm({ categories, user }: { categories: any[]
     ];
 
     return (
-        <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* Basic Information Card */}
-            <div style={{
+            <div className="fade-in-up hover-lift transition-smooth" style={{
                 background: 'white',
                 borderRadius: 'var(--radius-lg)',
-                padding: '32px',
+                padding: '24px',
                 boxShadow: 'var(--shadow-md)',
-                border: '1px solid var(--border-color)'
+                border: '1px solid var(--border-color)',
+                animationDelay: '0.1s'
             }}>
                 <h2 style={{
-                    fontSize: '18px',
+                    fontSize: '17px',
                     fontWeight: 700,
-                    marginBottom: '24px',
+                    marginBottom: '20px',
                     color: 'var(--text-main)',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '10px'
+                    gap: '8px'
                 }}>
-                    <span style={{ fontSize: '20px' }}>📝</span>
+                    <span style={{ fontSize: '18px' }}>📝</span>
                     Basic Information
                 </h2>
 
@@ -185,219 +186,223 @@ export default function CreateItemForm({ categories, user }: { categories: any[]
                 </div>
             </div>
 
-            {/* Type Selection Card */}
-            <div style={{
+            {/* QR Type & Content - Tabbed Interface */}
+            <div className="fade-in-up hover-lift transition-smooth" style={{
                 background: 'white',
                 borderRadius: 'var(--radius-lg)',
-                padding: '32px',
                 boxShadow: 'var(--shadow-md)',
-                border: '1px solid var(--border-color)'
+                border: '1px solid var(--border-color)',
+                animationDelay: '0.2s',
+                overflow: 'hidden'
             }}>
-                <h2 style={{
-                    fontSize: '18px',
-                    fontWeight: 700,
-                    marginBottom: '20px',
-                    color: 'var(--text-main)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px'
-                }}>
-                    <span style={{ fontSize: '20px' }}>🎯</span>
-                    Select QR Type
-                </h2>
-
                 <input type="hidden" name="type" value={selectedType} />
 
-                <div style={{ display: 'grid', gap: '12px' }}>
+                {/* Type Tabs */}
+                <div style={{
+                    display: 'flex',
+                    borderBottom: '2px solid var(--border-color)',
+                    background: 'var(--bg-subtle)'
+                }}>
                     {typeOptions.map((option) => (
-                        <div
+                        <button
                             key={option.value}
+                            type="button"
                             onClick={() => setSelectedType(option.value)}
+                            className="transition-smooth"
                             style={{
-                                padding: '20px',
-                                borderRadius: 'var(--radius-md)',
-                                border: selectedType === option.value
-                                    ? '3px solid var(--primary)'
-                                    : '2px solid var(--border-color)',
-                                background: selectedType === option.value
-                                    ? 'var(--primary-subtle)'
-                                    : 'white',
+                                flex: 1,
+                                padding: '14px 20px',
+                                background: selectedType === option.value ? 'white' : 'transparent',
+                                border: 'none',
+                                borderBottom: selectedType === option.value ? '3px solid var(--primary)' : '3px solid transparent',
+                                marginBottom: '-2px',
                                 cursor: 'pointer',
-                                transition: 'all 0.2s',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '16px',
-                                position: 'relative'
-                            }}
-                        >
-                            <div style={{
-                                width: '48px',
-                                height: '48px',
-                                borderRadius: 'var(--radius-md)',
-                                background: selectedType === option.value
-                                    ? 'var(--primary)'
-                                    : 'var(--bg-subtle)',
+                                fontWeight: 600,
+                                fontSize: '14px',
+                                color: selectedType === option.value ? 'var(--primary)' : 'var(--text-muted)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '24px',
-                                flexShrink: 0
-                            }}>
-                                {option.icon}
-                            </div>
-                            <div style={{ flex: 1 }}>
-                                <div style={{
-                                    fontSize: '16px',
-                                    fontWeight: 700,
-                                    color: 'var(--text-main)',
-                                    marginBottom: '4px'
-                                }}>
-                                    {option.label}
-                                </div>
-                                <div style={{
-                                    fontSize: '13px',
-                                    color: 'var(--text-muted)'
-                                }}>
-                                    {option.desc}
-                                </div>
-                            </div>
-                            {selectedType === option.value && (
-                                <div style={{
-                                    width: '24px',
-                                    height: '24px',
-                                    borderRadius: '50%',
-                                    background: 'var(--primary)',
-                                    color: 'white',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontSize: '14px',
-                                    fontWeight: 700
-                                }}>
-                                    ✓
-                                </div>
-                            )}
-                        </div>
+                                gap: '8px'
+                            }}
+                        >
+                            <span style={{ fontSize: '16px' }}>{option.icon}</span>
+                            {option.label}
+                        </button>
                     ))}
                 </div>
-            </div>
 
-            {/* Display Content Card */}
-            <div style={{
-                background: 'white',
-                borderRadius: 'var(--radius-lg)',
-                padding: '32px',
-                boxShadow: 'var(--shadow-md)',
-                border: '1px solid var(--border-color)'
-            }}>
-                <h2 style={{
-                    fontSize: '18px',
-                    fontWeight: 700,
-                    marginBottom: '20px',
-                    color: 'var(--text-main)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px'
-                }}>
-                    <span style={{ fontSize: '20px' }}>💬</span>
-                    Display Content
-                </h2>
-
-                {selectedType === 'ID' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                        <div>
-                            <label style={{
-                                fontSize: '13px',
-                                fontWeight: 600,
-                                color: 'var(--text-muted)',
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.05em',
-                                display: 'block',
-                                marginBottom: '10px'
-                            }}>
-                                Display Name *
-                            </label>
-                            <input
-                                type="text"
-                                name="payload_name"
-                                placeholder="Your Full Name"
-                                required
-                                defaultValue={user?.name || ''}
-                                style={{
-                                    width: '100%',
-                                    padding: '14px 16px',
-                                    fontSize: '15px',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '2px solid var(--border-color)',
-                                    background: 'white',
-                                    color: 'var(--text-main)',
-                                    fontWeight: 500,
-                                    transition: 'all 0.2s',
-                                    outline: 'none'
-                                }}
-                                onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                                onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
-                            />
+                {/* Tab Content */}
+                <div style={{ padding: '24px' }}>
+                    {/* ID Type Fields */}
+                    {selectedType === 'ID' && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            <div>
+                                <label style={{
+                                    fontSize: '12px',
+                                    fontWeight: 600,
+                                    color: 'var(--text-muted)',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.05em',
+                                    display: 'block',
+                                    marginBottom: '8px'
+                                }}>
+                                    Full Name *
+                                </label>
+                                <input
+                                    type="text"
+                                    name="payload_name"
+                                    placeholder="Your Full Name"
+                                    required
+                                    defaultValue={user?.name || ''}
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px 14px',
+                                        fontSize: '15px',
+                                        borderRadius: 'var(--radius-md)',
+                                        border: '2px solid var(--border-color)',
+                                        background: 'white',
+                                        color: 'var(--text-main)',
+                                        fontWeight: 500,
+                                        transition: 'all 0.2s',
+                                        outline: 'none'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                                    onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
+                                />
+                            </div>
+                            <div>
+                                <label style={{
+                                    fontSize: '12px',
+                                    fontWeight: 600,
+                                    color: 'var(--text-muted)',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.05em',
+                                    display: 'block',
+                                    marginBottom: '8px'
+                                }}>
+                                    Phone Number *
+                                </label>
+                                <input
+                                    type="tel"
+                                    name="payload_phone"
+                                    placeholder="+91 XXXXX XXXXX"
+                                    required
+                                    defaultValue={user?.mobile || ''}
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px 14px',
+                                        fontSize: '15px',
+                                        borderRadius: 'var(--radius-md)',
+                                        border: '2px solid var(--border-color)',
+                                        background: 'white',
+                                        color: 'var(--text-main)',
+                                        fontWeight: 500,
+                                        transition: 'all 0.2s',
+                                        outline: 'none'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                                    onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
+                                />
+                            </div>
                         </div>
-                        <div>
-                            <label style={{
-                                fontSize: '13px',
-                                fontWeight: 600,
-                                color: 'var(--text-muted)',
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.05em',
-                                display: 'block',
-                                marginBottom: '10px'
-                            }}>
-                                Phone Number *
-                            </label>
-                            <input
-                                type="tel"
-                                name="payload_phone"
-                                placeholder="+91 XXXXX XXXXX"
-                                required
-                                defaultValue={user?.mobile || ''}
-                                style={{
-                                    width: '100%',
-                                    padding: '14px 16px',
-                                    fontSize: '15px',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '2px solid var(--border-color)',
-                                    background: 'white',
-                                    color: 'var(--text-main)',
-                                    fontWeight: 500,
-                                    transition: 'all 0.2s',
-                                    outline: 'none'
-                                }}
-                                onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                                onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
-                            />
-                        </div>
-                    </div>
-                )}
+                    )}
 
-                {selectedType === 'LOST' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    {/* LOST Type Fields */}
+                    {selectedType === 'LOST' && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            <div>
+                                <label style={{
+                                    fontSize: '12px',
+                                    fontWeight: 600,
+                                    color: 'var(--text-muted)',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.05em',
+                                    display: 'block',
+                                    marginBottom: '8px'
+                                }}>
+                                    Message for Finder *
+                                </label>
+                                <textarea
+                                    name="payload_message"
+                                    rows={4}
+                                    placeholder="Please return this item to... Include any reward information if applicable."
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px 14px',
+                                        fontSize: '15px',
+                                        borderRadius: 'var(--radius-md)',
+                                        border: '2px solid var(--border-color)',
+                                        background: 'white',
+                                        color: 'var(--text-main)',
+                                        fontWeight: 500,
+                                        transition: 'all 0.2s',
+                                        outline: 'none',
+                                        resize: 'vertical',
+                                        fontFamily: 'inherit'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                                    onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
+                                />
+                            </div>
+                            <div>
+                                <label style={{
+                                    fontSize: '12px',
+                                    fontWeight: 600,
+                                    color: 'var(--text-muted)',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.05em',
+                                    display: 'block',
+                                    marginBottom: '8px'
+                                }}>
+                                    Contact Info (Optional)
+                                </label>
+                                <input
+                                    type="text"
+                                    name="payload_contact"
+                                    placeholder="Email or Phone Number"
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px 14px',
+                                        fontSize: '15px',
+                                        borderRadius: 'var(--radius-md)',
+                                        border: '2px solid var(--border-color)',
+                                        background: 'white',
+                                        color: 'var(--text-main)',
+                                        fontWeight: 500,
+                                        transition: 'all 0.2s',
+                                        outline: 'none'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                                    onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* CUSTOM Type Fields */}
+                    {selectedType === 'CUSTOM' && (
                         <div>
                             <label style={{
-                                fontSize: '13px',
+                                fontSize: '12px',
                                 fontWeight: 600,
                                 color: 'var(--text-muted)',
                                 textTransform: 'uppercase',
                                 letterSpacing: '0.05em',
                                 display: 'block',
-                                marginBottom: '10px'
+                                marginBottom: '8px'
                             }}>
-                                Message for Finder *
+                                Custom Content *
                             </label>
                             <textarea
-                                name="payload_message"
-                                rows={4}
-                                placeholder="Please return this item to... Include any reward information if applicable."
+                                name="payload_content"
+                                rows={5}
+                                placeholder="Enter any text, links, or information you want to display..."
                                 required
                                 style={{
                                     width: '100%',
-                                    padding: '14px 16px',
+                                    padding: '12px 14px',
                                     fontSize: '15px',
                                     borderRadius: 'var(--radius-md)',
                                     border: '2px solid var(--border-color)',
@@ -413,78 +418,8 @@ export default function CreateItemForm({ categories, user }: { categories: any[]
                                 onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
                             />
                         </div>
-                        <div>
-                            <label style={{
-                                fontSize: '13px',
-                                fontWeight: 600,
-                                color: 'var(--text-muted)',
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.05em',
-                                display: 'block',
-                                marginBottom: '10px'
-                            }}>
-                                Contact Info (Optional)
-                            </label>
-                            <input
-                                type="text"
-                                name="payload_contact"
-                                placeholder="Email or Phone Number"
-                                style={{
-                                    width: '100%',
-                                    padding: '14px 16px',
-                                    fontSize: '15px',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '2px solid var(--border-color)',
-                                    background: 'white',
-                                    color: 'var(--text-main)',
-                                    fontWeight: 500,
-                                    transition: 'all 0.2s',
-                                    outline: 'none'
-                                }}
-                                onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                                onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
-                            />
-                        </div>
-                    </div>
-                )}
-
-                {selectedType === 'CUSTOM' && (
-                    <div>
-                        <label style={{
-                            fontSize: '13px',
-                            fontWeight: 600,
-                            color: 'var(--text-muted)',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.05em',
-                            display: 'block',
-                            marginBottom: '10px'
-                        }}>
-                            Custom Content *
-                        </label>
-                        <textarea
-                            name="payload_content"
-                            rows={5}
-                            placeholder="Enter any text, links, or information you want to display..."
-                            required
-                            style={{
-                                width: '100%',
-                                padding: '14px 16px',
-                                fontSize: '15px',
-                                borderRadius: 'var(--radius-md)',
-                                border: '2px solid var(--border-color)',
-                                background: 'white',
-                                color: 'var(--text-main)',
-                                fontWeight: 500,
-                                transition: 'all 0.2s',
-                                outline: 'none',
-                                resize: 'vertical',
-                                fontFamily: 'inherit'
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                            onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
-                        />
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
 
             {/* Error Message */}
@@ -510,27 +445,28 @@ export default function CreateItemForm({ categories, user }: { categories: any[]
             <button
                 type="submit"
                 disabled={isPending}
+                className="hover-lift transition-smooth fade-in-up"
                 style={{
                     width: '100%',
-                    padding: '18px',
+                    padding: '16px',
                     background: isPending
                         ? '#9ca3af'
-                        : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        : 'var(--gradient-primary)',
                     color: 'white',
                     border: 'none',
                     borderRadius: 'var(--radius-md)',
-                    fontSize: '17px',
+                    fontSize: '16px',
                     fontWeight: 700,
                     cursor: isPending ? 'not-allowed' : 'pointer',
                     boxShadow: isPending
                         ? 'none'
-                        : '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-                    transition: 'all 0.2s',
+                        : 'var(--shadow-colored)',
                     opacity: isPending ? 0.6 : 1,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '10px'
+                    gap: '10px',
+                    animationDelay: '0.3s'
                 }}
             >
                 <span style={{ fontSize: '20px' }}>

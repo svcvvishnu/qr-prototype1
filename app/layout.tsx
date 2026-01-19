@@ -1,5 +1,7 @@
 import './globals.css';
 import { Outfit } from 'next/font/google';
+import InstallPrompt from './components/InstallPrompt';
+import OfflineIndicator from './components/OfflineIndicator';
 
 const outfit = Outfit({ subsets: ['latin'] });
 
@@ -39,6 +41,8 @@ export default function RootLayout({
             </head>
             <body className={outfit.className}>
                 {children}
+                <InstallPrompt />
+                <OfflineIndicator />
             </body>
         </html>
     );

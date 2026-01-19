@@ -31,7 +31,7 @@ export default function BottomNav() {
     }, []);
 
     return (
-        <nav style={{
+        <nav className="glass-strong" style={{
             position: 'fixed',
             bottom: 0,
             left: 0,
