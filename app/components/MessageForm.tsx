@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface MessageFormProps {
     itemId: number;
@@ -15,6 +15,27 @@ export default function MessageForm({ itemId, itemName, onSuccess }: MessageForm
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [error, setError] = useState('');
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userName, setUserName] = useState('');
+
+    // Check if user is logged in
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const response = await fetch('/api/auth/check');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.authenticated) {
+                        setIsLoggedIn(true);
+                        setUserName(data.name || 'User');
+                    }
+                }
+            } catch (err) {
+                // User not logged in, continue as anonymous
+            }
+        };
+        checkAuth();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -95,6 +116,24 @@ export default function MessageForm({ itemId, itemName, onSuccess }: MessageForm
                 💬 Send Message to Owner
             </h3>
 
+            {isLoggedIn && (
+                <div style={{
+                    padding: '12px',
+                    background: '#eff6ff',
+                    borderRadius: 'var(--radius-md)',
+                    marginBottom: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '14px',
+                    color: 'var(--primary)',
+                    fontWeight: 600
+                }}>
+                    <span style={{ fontSize: '18px' }}>✓</span>
+                    Sending as {userName}
+                </div>
+            )}
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {/* Message Content */}
                 <div>
@@ -147,55 +186,59 @@ export default function MessageForm({ itemId, itemName, onSuccess }: MessageForm
                 </div>
 
                 {/* Optional: Name for anonymous users */}
-                <div>
-                    <label style={{
-                        display: 'block',
-                        fontSize: '13px',
-                        fontWeight: 600,
-                        color: 'var(--text-muted)',
-                        marginBottom: '6px'
-                    }}>
-                        Your Name (Optional)
-                    </label>
-                    <input
-                        type="text"
-                        value={senderName}
-                        onChange={(e) => setSenderName(e.target.value)}
-                        placeholder="How should we call you?"
-                        maxLength={50}
-                        className="auth-input"
-                        style={{ marginBottom: 0 }}
-                    />
-                </div>
+                {!isLoggedIn && (
+                    <div>
+                        <label style={{
+                            display: 'block',
+                            fontSize: '13px',
+                            fontWeight: 600,
+                            color: 'var(--text-muted)',
+                            marginBottom: '6px'
+                        }}>
+                            Your Name (Optional)
+                        </label>
+                        <input
+                            type="text"
+                            value={senderName}
+                            onChange={(e) => setSenderName(e.target.value)}
+                            placeholder="How should we call you?"
+                            maxLength={50}
+                            className="auth-input"
+                            style={{ marginBottom: 0 }}
+                        />
+                    </div>
+                )}
 
                 {/* Optional: Contact for anonymous users */}
-                <div>
-                    <label style={{
-                        display: 'block',
-                        fontSize: '13px',
-                        fontWeight: 600,
-                        color: 'var(--text-muted)',
-                        marginBottom: '6px'
-                    }}>
-                        Contact Info (Optional)
-                    </label>
-                    <input
-                        type="text"
-                        value={senderContact}
-                        onChange={(e) => setSenderContact(e.target.value)}
-                        placeholder="Email or phone number"
-                        maxLength={100}
-                        className="auth-input"
-                        style={{ marginBottom: 0 }}
-                    />
-                    <div style={{
-                        fontSize: '11px',
-                        color: 'var(--text-light)',
-                        marginTop: '4px'
-                    }}>
-                        So the owner can respond to you
+                {!isLoggedIn && (
+                    <div>
+                        <label style={{
+                            display: 'block',
+                            fontSize: '13px',
+                            fontWeight: 600,
+                            color: 'var(--text-muted)',
+                            marginBottom: '6px'
+                        }}>
+                            Contact Info (Optional)
+                        </label>
+                        <input
+                            type="text"
+                            value={senderContact}
+                            onChange={(e) => setSenderContact(e.target.value)}
+                            placeholder="Email or phone number"
+                            maxLength={100}
+                            className="auth-input"
+                            style={{ marginBottom: 0 }}
+                        />
+                        <div style={{
+                            fontSize: '11px',
+                            color: 'var(--text-light)',
+                            marginTop: '4px'
+                        }}>
+                            So the owner can respond to you
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {error && (
                     <div style={{

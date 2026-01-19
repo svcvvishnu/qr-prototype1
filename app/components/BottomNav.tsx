@@ -101,9 +101,9 @@ export default function BottomNav() {
                 <span style={{ fontSize: '10px', fontWeight: 600 }}>Messages</span>
             </Link>
 
-            {/* Scale effect container for FAB */}
+            {/* Scan QR - Center FAB */}
             <div style={{ position: 'relative', top: '-24px' }}>
-                <Link href="/create" style={{
+                <Link href="/scan" style={{
                     width: '56px',
                     height: '56px',
                     borderRadius: '50%',
@@ -113,16 +113,36 @@ export default function BottomNav() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     boxShadow: 'var(--shadow-glow)',
-                    transition: 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+                    transition: 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                    textDecoration: 'none'
                 }}
                     className="hover-scale"
                 >
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
                     </svg>
                 </Link>
             </div>
+
+            {/* Create */}
+            <Link href="/create" style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+                color: isActive('/create') ? 'var(--primary)' : 'var(--text-light)',
+                transition: 'color 0.2s',
+                padding: '10px'
+            }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isActive('/create') ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span style={{ fontSize: '10px', fontWeight: 600 }}>Create</span>
+            </Link>
 
             {/* Profile */}
             <Link href="/profile" style={{
