@@ -9,6 +9,7 @@ export default function QRScanner() {
     const scannerRef = useRef<Html5Qrcode | null>(null);
     const [isScanning, setIsScanning] = useState(false);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [cameraId, setCameraId] = useState<string>('');
     const [cameras, setCameras] = useState<any[]>([]);
 
@@ -43,7 +44,7 @@ export default function QRScanner() {
             await scanner.start(
                 cameraId,
                 {
-                    fps: 10,
+                    fps: 30, // Increased from 10 to 30 for faster detection
                     qrbox: { width: 250, height: 250 }
                 },
                 (decodedText) => {
@@ -57,6 +58,7 @@ export default function QRScanner() {
 
             setIsScanning(true);
             setError('');
+            setSuccess('');
         } catch (err: any) {
             setError(err.message || 'Failed to start camera');
         }
@@ -75,7 +77,7 @@ export default function QRScanner() {
     };
 
     const handleScanSuccess = async (decodedText: string) => {
-        // Stop scanning
+        // Stop scanning immediately
         await stopScanning();
 
         try {
@@ -87,15 +89,29 @@ export default function QRScanner() {
                 // Extract item ID
                 const itemId = url.pathname.split('/q/')[1];
 
-                // Navigate to the public page
-                router.push(`/q/${itemId}`);
+                // Show success message
+                setSuccess('QR Code detected! Redirecting...');
+
+                // Navigate to the public page after a brief delay
+                setTimeout(() => {
+                    router.push(`/q/${itemId}`);
+                }, 500);
             } else {
                 setError('This QR code is not from QR Master app');
                 setTimeout(() => setError(''), 3000);
             }
         } catch (err) {
-            setError('Invalid QR code');
-            setTimeout(() => setError(''), 3000);
+            // Not a valid URL, try to extract item ID directly
+            // In case QR code just contains the item ID
+            if (/^\d+$/.test(decodedText)) {
+                setSuccess('QR Code detected! Redirecting...');
+                setTimeout(() => {
+                    router.push(`/q/${decodedText}`);
+                }, 500);
+            } else {
+                setError('Invalid QR code');
+                setTimeout(() => setError(''), 3000);
+            }
         }
     };
 
@@ -262,6 +278,23 @@ export default function QRScanner() {
                         textAlign: 'center'
                     }}>
                         {error}
+                    </div>
+                )}
+
+                {/* Success Message */}
+                {success && (
+                    <div style={{
+                        marginTop: '20px',
+                        padding: '16px 24px',
+                        background: '#d1fae5',
+                        color: '#065f46',
+                        borderRadius: 'var(--radius-md)',
+                        fontSize: '14px',
+                        fontWeight: 500,
+                        maxWidth: '400px',
+                        textAlign: 'center'
+                    }}>
+                        ✓ {success}
                     </div>
                 )}
 

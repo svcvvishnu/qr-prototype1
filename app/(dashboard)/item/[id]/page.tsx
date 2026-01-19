@@ -3,7 +3,8 @@ import { getSession } from '@/lib/auth';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import ItemEditor from './item-editor';
-import ScanHistory from './ScanHistory';
+import ItemTabs from './ItemTabs';
+import QRTypeTabs from './QRTypeTabs';
 
 async function getItem(id: number, userId: number) {
     const item = await prisma.item.findUnique({
@@ -18,9 +19,18 @@ async function getItem(id: number, userId: number) {
                 }
             },
             messages: {
+                where: {
+                    OR: [
+                        { receiverId: userId }, // Messages received by this user
+                        { senderId: userId }     // Messages sent by this user
+                    ]
+                },
                 orderBy: { createdAt: 'desc' },
                 include: {
                     sender: {
+                        select: { name: true, isVerified: true }
+                    },
+                    receiver: {
                         select: { name: true, isVerified: true }
                     }
                 }
@@ -52,279 +62,226 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
     if (!item) notFound();
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '900px', margin: '0 auto' }}>
-            {/* Back Button */}
-            <Link href="/" style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontSize: '14px',
-                color: 'var(--text-muted)',
-                fontWeight: 600,
-                textDecoration: 'none',
-                width: 'fit-content'
-            }}>
-                <span>←</span> Back to Dashboard
-            </Link>
-
-            {/* Main Content - Two Column Layout */}
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 16px' }}>
+            {/* Compact Header */}
             <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                gap: '20px',
-                alignItems: 'start'
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '20px'
             }}>
-                {/* Left Column - Info & QR */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    {/* Header Card */}
-                    <div style={{
-                        background: 'white',
-                        borderRadius: 'var(--radius-lg)',
-                        padding: '24px',
-                        boxShadow: 'var(--shadow-sm)',
-                        border: '1px solid var(--border-color)'
-                    }}>
-                        <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
-                            <span style={{
-                                padding: '6px 12px',
-                                background: item.status === 'PUBLISHED' ? '#d1fae5' : '#f3f4f6',
-                                color: item.status === 'PUBLISHED' ? '#065f46' : '#374151',
-                                borderRadius: 'var(--radius-full)',
-                                fontSize: '12px',
-                                fontWeight: 600,
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '4px'
-                            }}>
-                                {item.status === 'PUBLISHED' ? '●' : '○'} {item.status}
-                            </span>
-                            <span style={{
-                                padding: '6px 12px',
-                                background: 'var(--primary-subtle)',
-                                color: 'var(--primary)',
-                                borderRadius: 'var(--radius-full)',
-                                fontSize: '12px',
-                                fontWeight: 600
-                            }}>
-                                {item.type === 'ID' ? '🪪 ID' : item.type === 'LOST' ? '🔍 Lost' : '✨ Custom'}
-                            </span>
-                        </div>
+                <Link href="/" style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontSize: '13px',
+                    color: 'var(--text-muted)',
+                    fontWeight: 600,
+                    textDecoration: 'none'
+                }}>
+                    ← Back
+                </Link>
+            </div>
 
-                        <h1 style={{
-                            fontSize: '24px',
-                            fontWeight: 800,
-                            marginBottom: '6px',
-                            color: 'var(--text-main)'
+            {/* Hero Section - Compact with Stats */}
+            <div style={{
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                borderRadius: 'var(--radius-lg)',
+                padding: '24px',
+                marginBottom: '16px',
+                position: 'relative',
+                overflow: 'hidden'
+            }}>
+                {/* Decorative blob */}
+                <div style={{
+                    position: 'absolute',
+                    top: '-50px',
+                    right: '-50px',
+                    width: '200px',
+                    height: '200px',
+                    borderRadius: '50%',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    filter: 'blur(40px)'
+                }} />
+
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+                        <span style={{
+                            padding: '4px 10px',
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            color: 'white',
+                            borderRadius: 'var(--radius-full)',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            border: '1px solid rgba(255, 255, 255, 0.3)'
                         }}>
-                            {item.name}
-                        </h1>
-
-                        <p style={{
-                            fontSize: '14px',
-                            color: 'var(--text-muted)',
-                            marginBottom: '6px',
+                            {item.status}
+                        </span>
+                        <span style={{
+                            padding: '4px 10px',
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            color: 'white',
+                            borderRadius: 'var(--radius-full)',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            border: '1px solid rgba(255, 255, 255, 0.3)'
+                        }}>
+                            {item.type === 'ID' ? '🪪 ID' : item.type === 'LOST' ? '🔍 Lost' : '✨ Custom'}
+                        </span>
+                        {/* Compact Stats Badges */}
+                        <span style={{
+                            padding: '4px 10px',
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            color: 'white',
+                            borderRadius: 'var(--radius-full)',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            border: '1px solid rgba(255, 255, 255, 0.3)',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '6px'
+                            gap: '4px'
                         }}>
-                            <span style={{ fontSize: '16px' }}>📁</span>
-                            {item.category.name}
-                        </p>
-
-                        {item.description && (
-                            <p style={{
-                                fontSize: '14px',
-                                color: 'var(--text-muted)',
-                                lineHeight: 1.5,
-                                marginTop: '12px',
-                                padding: '12px',
-                                background: 'var(--bg-subtle)',
-                                borderRadius: 'var(--radius-md)',
-                                borderLeft: '3px solid var(--primary)'
-                            }}>
-                                {item.description}
-                            </p>
-                        )}
+                            �️ {item.scans.length}
+                        </span>
+                        <span style={{
+                            padding: '4px 10px',
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            color: 'white',
+                            borderRadius: 'var(--radius-full)',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            border: '1px solid rgba(255, 255, 255, 0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                        }}>
+                            💬 {item.messages.length}
+                        </span>
                     </div>
 
-                    {/* QR Code Card */}
-                    {item.qrCodeUrl && (
-                        <div style={{
-                            background: 'white',
-                            borderRadius: 'var(--radius-lg)',
-                            padding: '20px',
-                            boxShadow: 'var(--shadow-sm)',
-                            border: '1px solid var(--border-color)',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: '16px'
-                        }}>
-                            <img
-                                src={item.qrCodeUrl}
-                                alt="QR Code"
-                                style={{
-                                    width: '180px',
-                                    height: '180px',
-                                    borderRadius: 'var(--radius-md)',
-                                    background: 'white',
-                                    padding: '12px',
-                                    boxShadow: 'var(--shadow-sm)',
-                                    border: '1px solid var(--border-color)'
-                                }}
-                            />
-                            <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
-                                <a
-                                    href={item.qrCodeUrl}
-                                    download={`${item.name}-qr.png`}
-                                    style={{
-                                        flex: 1,
-                                        padding: '10px 16px',
-                                        background: 'var(--primary)',
-                                        color: 'white',
-                                        borderRadius: 'var(--radius-md)',
-                                        fontSize: '13px',
-                                        fontWeight: 600,
-                                        textDecoration: 'none',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '6px',
-                                        boxShadow: 'var(--shadow-sm)'
-                                    }}
-                                >
-                                    <span>⬇️</span> Download
-                                </a>
-                                <Link
-                                    href={`/q/${item.id}`}
-                                    target="_blank"
-                                    style={{
-                                        flex: 1,
-                                        padding: '10px 16px',
-                                        background: 'white',
-                                        color: 'var(--primary)',
-                                        border: '2px solid var(--primary)',
-                                        borderRadius: 'var(--radius-md)',
-                                        fontSize: '13px',
-                                        fontWeight: 600,
-                                        textDecoration: 'none',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '6px'
-                                    }}
-                                >
-                                    <span>👁️</span> Preview
-                                </Link>
-                            </div>
-                        </div>
-                    )}
+                    <h1 style={{
+                        fontSize: '24px',
+                        fontWeight: 700,
+                        color: 'white',
+                        marginBottom: '6px'
+                    }}>
+                        {item.name}
+                    </h1>
 
-                    {/* Scan History - Collapsible */}
-                    <ScanHistory scans={item.scans} />
+                    <p style={{
+                        fontSize: '13px',
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        marginBottom: item.description ? '12px' : '0'
+                    }}>
+                        📁 {item.category.name}
+                    </p>
 
-                    {/* Messages Section */}
-                    {item.messages && item.messages.length > 0 && (
-                        <div style={{
-                            background: 'white',
-                            borderRadius: 'var(--radius-lg)',
-                            padding: '20px',
-                            boxShadow: 'var(--shadow-sm)',
-                            border: '1px solid var(--border-color)'
+                    {item.description && (
+                        <p style={{
+                            fontSize: '13px',
+                            color: 'rgba(255, 255, 255, 0.85)',
+                            lineHeight: 1.5,
+                            padding: '12px',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: 'var(--radius-md)',
+                            border: '1px solid rgba(255, 255, 255, 0.2)'
                         }}>
-                            <h3 style={{
-                                fontSize: '16px',
-                                fontWeight: 700,
-                                marginBottom: '16px',
-                                color: 'var(--text-main)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px'
-                            }}>
-                                💬 Messages ({item.messages.length})
-                            </h3>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                {item.messages.map((message) => (
-                                    <div key={message.id} style={{
-                                        padding: '12px',
-                                        background: message.isRead ? 'var(--bg-subtle)' : '#eff6ff',
-                                        borderRadius: 'var(--radius-md)',
-                                        borderLeft: message.isRead ? '3px solid var(--border-color)' : '3px solid var(--primary)'
-                                    }}>
-                                        <div style={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'start',
-                                            marginBottom: '8px'
-                                        }}>
-                                            <div style={{
-                                                fontSize: '13px',
-                                                fontWeight: 600,
-                                                color: 'var(--text-main)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '6px'
-                                            }}>
-                                                {message.sender?.name || message.senderName || 'Anonymous'}
-                                                {message.sender?.isVerified && (
-                                                    <span style={{ fontSize: '14px', color: 'var(--primary)' }}>✓</span>
-                                                )}
-                                            </div>
-                                            <div style={{
-                                                fontSize: '11px',
-                                                color: 'var(--text-light)'
-                                            }}>
-                                                {new Date(message.createdAt).toLocaleDateString('en-US', {
-                                                    month: 'short',
-                                                    day: 'numeric',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit'
-                                                })}
-                                            </div>
-                                        </div>
-                                        <p style={{
-                                            fontSize: '14px',
-                                            color: 'var(--text-main)',
-                                            lineHeight: 1.5,
-                                            marginBottom: message.senderContact ? '8px' : '0'
-                                        }}>
-                                            {message.content}
-                                        </p>
-                                        {message.senderContact && (
-                                            <div style={{
-                                                fontSize: '12px',
-                                                color: 'var(--text-muted)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '4px',
-                                                marginTop: '8px',
-                                                padding: '8px',
-                                                background: 'white',
-                                                borderRadius: 'var(--radius-sm)'
-                                            }}>
-                                                📧 {message.senderContact}
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                            {item.description}
+                        </p>
                     )}
                 </div>
+            </div>
 
-                {/* Right Column - Editor */}
+            {/* QR Code Section - Compact */}
+            {item.qrCodeUrl && (
                 <div style={{
                     background: 'white',
                     borderRadius: 'var(--radius-lg)',
-                    padding: '24px',
-                    boxShadow: 'var(--shadow-sm)',
+                    padding: '16px',
                     border: '1px solid var(--border-color)',
-                    position: 'sticky',
-                    top: '20px'
+                    boxShadow: 'var(--shadow-sm)',
+                    marginBottom: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '16px'
                 }}>
-                    <ItemEditor item={item} user={user} />
+                    <img
+                        src={item.qrCodeUrl}
+                        alt="QR Code"
+                        style={{
+                            width: '80px',
+                            height: '80px',
+                            borderRadius: 'var(--radius-md)',
+                            flexShrink: 0
+                        }}
+                    />
+                    <div style={{ flex: 1, display: 'flex', gap: '8px' }}>
+                        <a
+                            href={item.qrCodeUrl}
+                            download={`${item.name}-qr.png`}
+                            style={{
+                                flex: 1,
+                                padding: '10px 16px',
+                                background: 'var(--primary)',
+                                color: 'white',
+                                borderRadius: 'var(--radius-md)',
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '6px'
+                            }}
+                        >
+                            <span>⬇️</span> Download
+                        </a>
+                        <Link
+                            href={`/q/${item.id}`}
+                            target="_blank"
+                            style={{
+                                flex: 1,
+                                padding: '10px 16px',
+                                background: 'white',
+                                color: 'var(--primary)',
+                                border: '2px solid var(--primary)',
+                                borderRadius: 'var(--radius-md)',
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '6px'
+                            }}
+                        >
+                            <span>👁️</span> Preview
+                        </Link>
+                    </div>
                 </div>
+            )}
+
+            {/* QR Type Editor - Editable Tabs */}
+            <div style={{
+                background: 'white',
+                borderRadius: 'var(--radius-lg)',
+                border: '1px solid var(--border-color)',
+                boxShadow: 'var(--shadow-sm)',
+                padding: '20px',
+                marginBottom: '16px'
+            }}>
+                <ItemEditor item={item} user={user} />
             </div>
+
+            {/* Scan History & Messages Tabs */}
+            <ItemTabs
+                scans={item.scans}
+                messages={item.messages}
+                itemId={item.id}
+                currentUserId={session.userId}
+            />
         </div>
     );
 }
