@@ -73,6 +73,13 @@ model Message {
   senderName     String?  // For anonymous senders
   senderContact  String?  // Email/phone for anonymous senders
   isRead         Boolean  @default(false)
+  
+  // Conversation thread support
+  threadId       String?  // Groups messages in a conversation
+  parentMessageId Int?    // For replies
+  parentMessage  Message? @relation("MessageReplies", fields: [parentMessageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies        Message[] @relation("MessageReplies")
+  
   createdAt      DateTime @default(now())
 }
 
